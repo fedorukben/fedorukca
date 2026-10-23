@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculus 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Twenty-nine interactive Calculus 1 lessons on limits, derivatives and integrals, from Fedoruk Publishing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;600;700&family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Fedoruk brand: paper ground, indigo type and structure, ochre as the single accent. A numbered course list on a drafting sheet. */
+:root{
+  --paper:#F4F0E8; --grid:#ECE7DC; --grid-major:#E2DBCD; --sheet:#FFFFFF;
+  --indigo:#2B2E6E; --ink:#1E1E24; --ink-soft:#56576B; --rule:#C9C4D4;
+  --acc:#C08A2E; --acc-text:#865A12; --acc-wash:rgba(192,138,46,.18); --pos:rgba(192,138,46,.30); --neg:rgba(43,46,110,.22);
+  --display:"Aleo",Rockwell,"Roboto Slab",Georgia,serif;
+  --text:"Montserrat","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#181A40; --grid:#1D1F4A; --grid-major:#232654; --sheet:#20234F;
+  --indigo:#F4F0E8; --ink:#F4F0E8; --ink-soft:#B7B6CC; --rule:#41447A;
+  --acc:#D9A548; --acc-text:#E2B460; --acc-wash:rgba(217,165,72,.2); --pos:rgba(217,165,72,.32); --neg:rgba(174,177,238,.26); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#181A40; --grid:#1D1F4A; --grid-major:#232654; --sheet:#20234F;
+  --indigo:#F4F0E8; --ink:#F4F0E8; --ink-soft:#B7B6CC; --rule:#41447A;
+  --acc:#D9A548; --acc-text:#E2B460; --acc-wash:rgba(217,165,72,.2); --pos:rgba(217,165,72,.32); --neg:rgba(174,177,238,.26); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-major) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-major) 1px,transparent 1px),
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+  color:var(--ink);font-family:var(--text);font-size:1rem;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 56px;
+}
+.sheet{
+  max-width:1000px;margin:0 auto;
+  border:2px solid var(--indigo);outline:1px solid var(--indigo);outline-offset:5px;
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  padding:clamp(20px,5vw,56px);display:grid;gap:56px;
+}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;color:var(--indigo)}
+h1{font-size:clamp(2.8rem,8vw,4.8rem);line-height:1;font-weight:700}
+h2{font-size:clamp(1.35rem,3vw,1.7rem);line-height:1.2;font-weight:600}
+h3{font-size:1.35rem;line-height:1.2;font-weight:600}
+p{margin:0}
+.intro{max-width:62ch;display:grid;gap:16px}
+.lede{font-size:1.15rem;line-height:1.6}
+.lab{font-weight:600;font-size:.9rem;color:var(--ink-soft)}
+.part{display:grid;gap:14px}
+.part > header{display:grid;gap:4px;max-width:62ch}
+ol.lessons{list-style:none;margin:0;padding:0;border:1.5px solid var(--indigo);background:var(--sheet)}
+ol.lessons li + li{border-top:1px solid var(--rule)}
+a.lesson{
+  display:grid;grid-template-columns:3rem 132px minmax(0,1fr) auto;gap:20px;align-items:center;
+  padding:18px 20px;color:inherit;text-decoration:none;
+}
+a.lesson:hover{background:var(--paper)}
+a.lesson:hover .go{background:var(--indigo);color:var(--sheet)}
+a.lesson:focus-visible{outline:2px solid var(--acc);outline-offset:-4px}
+.num{font-family:var(--display);font-weight:700;font-size:1.8rem;color:var(--indigo);line-height:1;font-variant-numeric:tabular-nums}
+.glyph{width:132px;height:80px;border:1px solid var(--rule);background:var(--sheet);display:block}
+.body{display:grid;gap:4px;min-width:0}
+.q{color:var(--ink)}
+.sub{font-family:var(--display);font-weight:600;color:var(--acc-text);font-size:1rem;line-height:1.2;margin-top:-2px}
+.does{color:var(--ink-soft);font-size:.92rem}
+.go{border:1.5px solid var(--indigo);padding:6px 14px;font-weight:600;font-size:.95rem;white-space:nowrap;color:var(--indigo)}
+.how{max-width:62ch;display:grid;gap:12px;border-left:3px solid var(--acc);padding-left:16px}
+.intro a{color:var(--indigo);font-weight:600}
+.mast .lockup{font-size:clamp(16px,4.6vw,23.9px)!important}
+.mast{padding-bottom:20px;border-bottom:1px solid var(--rule);margin-bottom:-24px}
+footer{color:var(--ink-soft);font-size:.9rem;font-weight:600}
+@media (max-width:760px){
+  a.lesson{grid-template-columns:2.4rem minmax(0,1fr);gap:8px 14px;align-items:start}
+  .glyph{display:none}
+  .go{grid-column:2;justify-self:start;margin-top:6px}
+}
+</style>
+
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<main class="sheet">
+  <header class="mast"><a class="lockup" href="index.html" aria-label="Fedoruk Publishing, all lessons" style="display:inline-flex;align-items:center;gap:.68em;color:var(--indigo);text-decoration:none;line-height:1;font-size:26.9px"><svg viewBox="17.852 3.993 131.441 31.685" width="6.691em" height="1.613em" aria-hidden="true" focusable="false" style="display:block;color:var(--indigo);flex:none"><path fill="currentColor" fill-rule="nonzero" transform="translate(-10.102788 -38.914444)" d="M54.924 73.304Q52.04 73.304 49.887 72Q47.733 70.696 46.548 68.286Q45.441 66.036 45.368 63.029H35.155V70.646L37.198 71.082Q37.49 71.118 37.635 71.319Q37.781 71.519 37.781 71.848V73.343H28.955V71.848Q28.955 71.519 29.101 71.319Q29.247 71.118 29.538 71.082L31.581 70.646V49.889L29.538 49.453Q29.247 49.38 29.101 49.198Q28.955 49.016 28.955 48.687V47.192H47.702V53.392H46.024Q45.732 53.392 45.532 53.265Q45.331 53.137 45.258 52.809L44.848 50.073H35.155V60.823H45.485Q45.737 59.055 46.508 57.539Q47.654 55.286 49.768 53.983Q51.882 52.679 54.727 52.679Q57.216 52.679 59.073 53.785Q60.93 54.891 61.977 56.887Q63.024 58.882 63.024 61.648Q63.024 62.477 62.846 62.754Q62.668 63.031 62.155 63.031H48.839V63.544Q49.037 66.863 50.697 68.7Q52.356 70.538 55.201 70.538Q56.426 70.538 57.631 70.044Q58.836 69.55 59.764 69.076Q60.693 68.602 61.088 68.602Q61.523 68.602 61.76 68.918L62.747 70.222Q61.957 71.249 60.634 71.94Q59.31 72.632 57.809 72.968Q56.307 73.304 54.924 73.304ZM71.392 73.304Q68.942 73.304 67.243 72.039Q65.544 70.775 64.675 68.463Q63.806 66.152 63.806 63.07Q63.806 60.146 64.833 57.795Q65.86 55.444 67.816 54.042Q69.772 52.639 72.459 52.639Q74.316 52.639 75.62 53.271Q76.923 53.904 77.951 55.01V46.829L75.738 46.357Q75.422 46.278 75.264 46.08Q75.106 45.883 75.106 45.527V43.907H81.467V70.105L83.68 70.577Q83.996 70.617 84.154 70.834Q84.312 71.051 84.312 71.407V73.027H79.373Q78.583 73.027 78.425 72.276L78.109 69.866Q76.805 71.407 75.165 72.355Q73.526 73.304 71.392 73.304ZM94.023 52.679Q94.373 52.679 94.71 52.696Q95.97 52.761 97.062 53.068L97.062 53.068Q97.66 53.237 98.208 53.478Q98.694 53.692 99.14 53.963Q99.355 54.093 99.559 54.234L99.564 54.238Q100.663 54.997 101.473 56.067Q101.811 56.512 102.098 57.012Q102.113 57.038 102.128 57.064Q102.27 57.314 102.4 57.578Q103.546 59.909 103.546 62.991Q103.546 66.073 102.4 68.404Q101.254 70.735 99.14 72.019Q98.694 72.291 98.208 72.505Q98.118 72.544 98.028 72.581Q96.276 73.304 94.023 73.304Q92.961 73.304 92 73.134Q90.317 72.837 88.946 72.019Q86.793 70.735 85.627 68.404Q84.462 66.073 84.462 62.991Q84.462 59.909 85.627 57.578Q86.793 55.247 88.946 53.963Q91.1 52.679 94.023 52.679ZM154.365 73.276Q153.931 73.276 153.654 73.099Q153.378 72.921 153.061 72.565L146.463 64.386Q146.186 63.952 145.89 63.833Q145.594 63.715 145.001 63.715H144.013V70.355L146.226 70.827Q146.542 70.866 146.7 71.084Q146.858 71.301 146.858 71.656V73.276H137.652V71.656Q137.652 71.301 137.81 71.084Q137.968 70.866 138.284 70.827L140.497 70.355V47.078L138.284 46.606Q137.968 46.527 137.81 46.33Q137.652 46.132 137.652 45.777V44.157H144.013V61.305H144.922Q145.317 61.305 145.594 61.186Q145.87 61.067 146.147 60.751L150.655 55.905L149.663 55.694Q149.347 55.615 149.189 55.417Q149.031 55.22 149.031 54.864V53.244H157.131V54.864Q157.131 55.22 156.973 55.417Q156.815 55.615 156.499 55.694L154.312 56.161L149.663 61.107Q149.387 61.384 149.13 61.66Q148.873 61.937 148.518 62.134Q149.189 62.608 149.703 63.399L155.143 70.268L157.763 70.827Q158.079 70.866 158.237 71.084Q158.395 71.301 158.395 71.656V73.276ZM124.029 73.592Q121.856 73.592 120.355 72.624Q118.853 71.656 118.083 69.957Q117.312 68.258 117.312 66.006V56.166L115.1 55.694Q114.784 55.615 114.626 55.417Q114.468 55.219 114.468 54.864V53.244H120.829V66.006Q120.829 68.298 121.876 69.542Q122.923 70.787 125.057 70.787Q126.598 70.787 127.961 70.056Q129.324 69.325 130.47 68.021V56.166L128.257 55.694Q127.941 55.615 127.783 55.417Q127.625 55.219 127.625 54.864V53.244H133.986V70.354L136.199 70.826Q136.515 70.866 136.673 71.083Q136.831 71.301 136.831 71.656V73.276H131.892Q131.102 73.276 130.944 72.525L130.667 70.392Q129.363 71.814 127.743 72.703Q126.123 73.592 124.029 73.592ZM94.023 70.538Q96.987 70.538 98.449 68.562Q99.911 66.587 99.911 63.031Q99.911 60.62 99.259 58.941Q98.607 57.262 97.303 56.353Q95.999 55.444 94.023 55.444Q92.008 55.444 90.685 56.373Q89.361 57.301 88.729 59Q88.097 60.699 88.097 63.031Q88.097 66.468 89.559 68.503Q91.021 70.538 94.023 70.538ZM72.538 70.459Q74.276 70.459 75.56 69.669Q76.844 68.878 77.951 67.416V57.736Q76.963 56.432 75.817 55.919Q74.671 55.405 73.249 55.405Q71.392 55.405 70.088 56.294Q68.784 57.183 68.112 58.902Q67.441 60.62 67.441 63.07Q67.441 66.666 68.666 68.562Q69.89 70.459 72.538 70.459ZM99.114 52.398H106.296Q108.74 52.398 110.426 53.052Q112.155 53.723 113.074 55.048Q113.995 56.376 113.995 58.339Q113.995 59.886 113.35 61.115Q112.707 62.341 111.529 63.177Q110.649 63.8 109.531 64.17Q109.716 64.36 109.899 64.599L114.13 70.369L115.538 70.669Q115.916 70.723 116.123 71.007Q116.309 71.263 116.309 71.641V73.177H113.017Q112.049 73.177 111.601 72.413L106.426 65.29Q106.234 65.035 106.037 64.936Q105.841 64.838 105.376 64.838H104.441V62.075H106.157Q108.278 62.075 109.453 61.129Q110.59 60.215 110.59 58.534Q110.59 56.943 109.558 56.155Q108.478 55.329 106.296 55.329H103.732V55.332H103.25ZM48.958 60.818H59.863Q59.863 58.368 58.52 56.827Q57.176 55.286 54.806 55.286Q52.237 55.286 50.776 56.748Q49.314 58.21 48.958 60.818Z"/></svg><span aria-hidden="true" style="align-self:stretch;width:1px;background:var(--indigo)"></span><span aria-hidden="true" style="font-family:var(--display);font-weight:400;letter-spacing:.01em;color:var(--indigo)">Publishing</span></a></header>
+  <section class="intro" aria-labelledby="t">
+    <h1 id="t">Calculus 1</h1>
+    <p class="lede">Twenty-nine interactive lessons on limits, derivatives and integrals. Each one starts with a question, gives you a graph to work with, and asks you to commit to an answer before it shows you one.</p>
+    <p>The lessons are numbered in the order most courses teach them, from the first idea of a limit to the average value of a function. If you are reviewing for a test, go straight to the topic you need. Teaching with them? Start with the <a href="instructor-guide.html">instructor guide</a>.</p>
+  </section>
+
+  <section class="part" aria-labelledby="p1">
+    <header>
+      <span class="lab">Part one</span>
+      <h2 id="p1">Limits</h2>
+      <p>What do you do when substituting gives you no answer?</p>
+    </header>
+    <ol class="lessons" start="1">
+      <li><a class="lesson" href="what-is-a-limit.html">
+        <span class="num">1</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 66 Q50 20 124 30" stroke="var(--ink)" stroke-width="2" fill="none"/><circle cx="70" cy="30" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><circle cx="48" cy="38" r="4" fill="var(--acc)"/><circle cx="92" cy="27" r="4" fill="var(--acc)"/></svg>
+        <span class="body"><h3>The idea of a limit</h3><span class="sub">Getting close</span><span class="q">Can a function have a limit where it is not even defined?</span><span class="does">What a limit means, estimated from graphs and tables.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="limit-laws.html">
+        <span class="num">2</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 60 L124 30" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4"/><path d="M8 30 Q66 70 124 40" stroke="var(--acc)" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/><path d="M8 50 Q66 60 124 20" stroke="var(--ink)" stroke-width="2" fill="none"/></svg>
+        <span class="body"><h3>The limit laws</h3><span class="sub">Taking limits apart</span><span class="q">When can you split a limit into simpler pieces, and when does that go wrong?</span><span class="does">The limit laws and direct substitution.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="zero-over-zero.html">
+        <span class="num">3</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 70 L56 34" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M68 25 L124 -16" stroke="var(--ink)" stroke-width="2" fill="none"/><circle cx="62" cy="29.5" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><circle cx="40" cy="46" r="5" fill="var(--acc)"/></svg>
+        <span class="body"><h3>Limits by factoring</h3><span class="sub">Zero over zero</span><span class="q">Substituting gives 0/0. Does that mean there is no limit?</span><span class="does">Factoring and cancelling, with a graph that shows the hole.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="multiply-by-the-conjugate.html">
+        <span class="num">4</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 66 C30 50 50 42 66 37" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M76 34 C92 30 108 27 126 25" stroke="var(--ink)" stroke-width="2" fill="none"/><circle cx="71" cy="35.5" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><text x="14" y="22" font-family="Aleo, Georgia, serif" font-size="15" font-weight="700" fill="var(--indigo)">√</text></svg>
+        <span class="body"><h3>Limits by rationalizing</h3><span class="sub">Multiply by the conjugate</span><span class="q">The numerator has a square root, so there is nothing to factor. Where is the common factor hiding?</span><span class="does">Rationalizing with conjugates, and the sign traps that come with it.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="left-and-right.html">
+        <span class="num">5</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><line x1="66" y1="6" x2="66" y2="74" stroke="var(--rule)" stroke-dasharray="6 4"/><path d="M8 58 H60" stroke="var(--ink)" stroke-width="2"/><path d="M72 22 H126" stroke="var(--ink)" stroke-width="2"/><circle cx="66" cy="58" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><circle cx="66" cy="22" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><circle cx="40" cy="58" r="5" fill="var(--indigo)"/><circle cx="92" cy="22" r="5" fill="var(--acc)"/></svg>
+        <span class="body"><h3>One-sided limits and absolute values</h3><span class="sub">Left of a, right of a</span><span class="q">What if the function approaches one number from the left and another from the right?</span><span class="does">One-sided limits, absolute values and piecewise functions.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="the-squeeze.html">
+        <span class="num">6</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><rect x="42" y="4" width="48" height="72" fill="var(--acc-wash)"/><path d="M6 8 Q66 72 126 8" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/><path d="M6 72 Q66 8 126 72" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/><path d="M14 30 L22 52 L30 32 L38 46 L46 36 L54 43 L60 38 L66 40 L72 41 L78 38 L86 44 L94 34 L102 48 L110 28 L118 54" stroke="var(--ink)" stroke-width="1.5" fill="none"/></svg>
+        <span class="body"><h3>The Squeeze Theorem</h3><span class="sub">Trapped between two curves</span><span class="q">A function oscillates too fast to factor or substitute. What else could pin its limit down?</span><span class="does">The squeeze theorem, including the limit of sin x / x.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="limits-at-infinity.html">
+        <span class="num">7</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><line x1="0" y1="24" x2="132" y2="24" stroke="var(--acc)" stroke-dasharray="6 4"/><path d="M6 70 C30 30 50 26 126 25" stroke="var(--ink)" stroke-width="2" fill="none"/></svg>
+        <span class="body"><h3>Limits at infinity</h3><span class="sub">As x grows</span><span class="q">When x is a million, which terms still matter?</span><span class="does">Limits at infinity and horizontal asymptotes.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p2">
+    <header>
+      <span class="lab">Part two</span>
+      <h2 id="p2">Continuity and the meaning of a limit</h2>
+      <p>What exactly are you claiming when you write that a limit equals L?</p>
+    </header>
+    <ol class="lessons" start="8">
+      <li><a class="lesson" href="continuity.html">
+        <span class="num">8</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 66 L58 40" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M64 24 L124 10" stroke="var(--ink)" stroke-width="2" fill="none"/><circle cx="61" cy="38.5" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2"/><circle cx="61" cy="25" r="5" fill="var(--acc)"/></svg>
+        <span class="body"><h3>Continuity and the Intermediate Value Theorem</h3><span class="sub">Without lifting the pencil</span><span class="q">What exactly has to be true for a graph to have no break?</span><span class="does">Continuity, kinds of discontinuity, and the Intermediate Value Theorem.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="within-tolerance.html">
+        <span class="num">9</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><rect x="0" y="30" width="132" height="20" fill="var(--acc-wash)"/><rect x="52" y="0" width="28" height="80" fill="color-mix(in srgb,var(--indigo) 14%,transparent)"/><path d="M8 74 L124 6" stroke="var(--ink)" stroke-width="2"/><line x1="0" y1="30" x2="132" y2="30" stroke="var(--acc)" stroke-dasharray="5 3"/><line x1="0" y1="50" x2="132" y2="50" stroke="var(--acc)" stroke-dasharray="5 3"/></svg>
+        <span class="body"><h3>The precise definition of a limit</h3><span class="sub">Within tolerance</span><span class="q">However close someone demands the output be, can you always keep the input close enough to deliver it?</span><span class="does">The ε-δ definition of a limit, a δ tester and the δ game.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p3">
+    <header>
+      <span class="lab">Part three</span>
+      <h2 id="p3">The derivative</h2>
+      <p>A slope needs two points. How can a curve have a slope at one?</p>
+    </header>
+    <ol class="lessons" start="10">
+      <li><a class="lesson" href="slope-at-a-point.html">
+        <span class="num">10</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M6 10 Q50 110 126 6" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M10 78 L126 20" stroke="var(--acc)" stroke-width="2"/><path d="M8 66 L126 48" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="6 4"/><circle cx="54" cy="54" r="4.5" fill="var(--indigo)"/><circle cx="98" cy="32" r="4.5" fill="var(--acc)"/></svg>
+        <span class="body"><h3>The definition of the derivative</h3><span class="sub">Slope at a point</span><span class="q">What happens to the slope of a secant line as its second point slides toward the first?</span><span class="does">The limit definition of the derivative and a tangent-matching game.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="derivative-function.html">
+        <span class="num">11</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M6 30 Q36 -6 66 40 T126 40" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M6 62 Q36 76 66 62 T126 62" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/></svg>
+        <span class="body"><h3>The derivative as a function</h3><span class="sub">Drawing f′</span><span class="q">Could you sketch the derivative from the graph alone, with no formula?</span><span class="does">The derivative as a function, and matching f with f′.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="derivative-rules.html">
+        <span class="num">12</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><rect x="14" y="30" width="60" height="40" fill="none" stroke="var(--indigo)" stroke-width="2"/><rect x="74" y="30" width="20" height="40" fill="var(--pos)"/><rect x="14" y="14" width="60" height="16" fill="var(--neg)"/><rect x="74" y="14" width="20" height="16" fill="var(--ink-soft)"/></svg>
+        <span class="body"><h3>The power, product and quotient rules</h3><span class="sub">Rules from rectangles</span><span class="q">Is the derivative of a product just the product of the derivatives?</span><span class="does">The power, product and quotient rules.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="chain-rule.html">
+        <span class="num">13</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><line x1="10" y1="16" x2="122" y2="16" stroke="var(--ink)" stroke-width="2"/><line x1="10" y1="40" x2="122" y2="40" stroke="var(--ink)" stroke-width="2"/><line x1="10" y1="64" x2="122" y2="64" stroke="var(--ink)" stroke-width="2"/><rect x="50" y="11" width="10" height="10" fill="var(--acc)"/><rect x="40" y="35" width="26" height="10" fill="var(--neg)"/><rect x="22" y="59" width="70" height="10" fill="var(--pos)"/></svg>
+        <span class="body"><h3>The chain rule</h3><span class="sub">Rates in a chain</span><span class="q">If u changes three times as fast as x, and y twice as fast as u, how fast does y change?</span><span class="does">The chain rule for compositions.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="implicit-differentiation.html">
+        <span class="num">14</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><circle cx="60" cy="42" r="28" stroke="var(--ink)" stroke-width="2" fill="none"/><line x1="62" y1="2" x2="128" y2="44" stroke="var(--indigo)" stroke-width="1.75"/><circle cx="83" cy="25" r="4.5" fill="var(--acc)"/></svg>
+        <span class="body"><h3>Implicit differentiation</h3><span class="sub">Curves that are not functions</span><span class="q">How do you find the slope of a circle without solving for y?</span><span class="does">Implicit differentiation.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="logarithmic-differentiation.html">
+        <span class="num">15</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M10 40 Q30 66 50 58 T124 6" stroke="var(--ink)" stroke-width="2" fill="none"/><line x1="40" y1="78" x2="124" y2="14" stroke="var(--acc)" stroke-width="2"/><circle cx="88" cy="41" r="4.5" fill="var(--indigo)"/><text x="12" y="20" font-family="Aleo, Georgia, serif" font-size="15" font-weight="700" fill="var(--indigo)">ln</text></svg>
+        <span class="body"><h3>Logarithmic differentiation</h3><span class="sub">Taking logs first</span><span class="q">The power rule and the exponential rule both fail on xˣ. What works when base and exponent both change?</span><span class="does">Logarithmic differentiation for variable powers and long products.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="differentials.html">
+        <span class="num">16</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 74 Q64 50 124 8" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M8 66 L124 22" stroke="var(--indigo)" stroke-width="1.5"/><line x1="44" y1="52" x2="96" y2="52" stroke="var(--acc)" stroke-width="2.5"/><line x1="96" y1="52" x2="96" y2="33" stroke="var(--acc)" stroke-width="4"/><line x1="96" y1="33" x2="96" y2="26" stroke="var(--indigo)" stroke-width="2" stroke-dasharray="3 2"/><circle cx="44" cy="52" r="4.5" fill="var(--indigo)"/></svg>
+        <span class="body"><h3>Differentials</h3><span class="sub">Small changes, estimated</span><span class="q">If you know how a quantity changes, how far off can a small measurement error push the answer?</span><span class="does">Differentials dy and dx, and how errors spread through a formula.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p4">
+    <header>
+      <span class="lab">Part four</span>
+      <h2 id="p4">Using derivatives</h2>
+      <p>What can the derivative tell you about the world?</p>
+    </header>
+    <ol class="lessons" start="17">
+      <li><a class="lesson" href="linear-approximation.html">
+        <span class="num">17</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M6 74 Q60 34 126 22" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M6 78 L126 8" stroke="var(--indigo)" stroke-width="1.75"/><circle cx="56" cy="47" r="4.5" fill="var(--indigo)"/><line x1="104" y1="27" x2="104" y2="21" stroke="var(--acc)" stroke-width="4"/></svg>
+        <span class="body"><h3>Linear approximation</h3><span class="sub">Straight up close</span><span class="q">How could the slope at 4 help you estimate √4.1?</span><span class="does">Tangent lines as approximations, and how fast their error shrinks.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="related-rates.html">
+        <span class="num">18</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><line x1="18" y1="6" x2="18" y2="72" stroke="var(--ink)" stroke-width="3"/><line x1="18" y1="72" x2="128" y2="72" stroke="var(--ink)" stroke-width="3"/><line x1="18" y1="22" x2="82" y2="72" stroke="var(--acc)" stroke-width="5" stroke-linecap="round"/></svg>
+        <span class="body"><h3>Related rates</h3><span class="sub">Rates that depend on each other</span><span class="q">The foot of a ladder slides at a steady speed. Does the top?</span><span class="does">Related rates, with animated scenes.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="curve-sketching.html">
+        <span class="num">19</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M6 44 Q30 4 54 40 T104 40 T126 20" stroke="var(--ink)" stroke-width="2" fill="none"/><rect x="6" y="60" width="28" height="14" fill="var(--pos)"/><rect x="34" y="60" width="38" height="14" fill="var(--neg)"/><rect x="72" y="60" width="54" height="14" fill="var(--pos)"/></svg>
+        <span class="body"><h3>Curve sketching</h3><span class="sub">Shape from signs</span><span class="q">If you knew only where f′ and f″ are positive, could you sketch f?</span><span class="does">Increasing, decreasing, concavity, extrema and inflection points.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="optimization.html">
+        <span class="num">20</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 72 Q48 -4 124 64" stroke="var(--ink)" stroke-width="2" fill="none"/><line x1="20" y1="15" x2="100" y2="15" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4"/><circle cx="60" cy="16" r="5" fill="var(--acc)"/></svg>
+        <span class="body"><h3>Optimization</h3><span class="sub">The best choice</span><span class="q">Which corner cut makes the biggest box?</span><span class="does">Optimization problems, solved by hand and with the derivative.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="mean-value-theorem.html">
+        <span class="num">21</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 66 C40 66 60 10 124 18" stroke="var(--ink)" stroke-width="2" fill="none"/><line x1="8" y1="66" x2="124" y2="18" stroke="var(--acc)" stroke-width="1.75"/><line x1="20" y1="58" x2="112" y2="20" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4"/></svg>
+        <span class="body"><h3>The Mean Value Theorem</h3><span class="sub">Somewhere in between</span><span class="q">If you averaged 80 km/h, must your speedometer have read 80?</span><span class="does">The Mean Value Theorem and why its hypotheses matter.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+    </ol>
+  </section>
+
+  <section class="part" aria-labelledby="p5">
+    <header>
+      <span class="lab">Part five</span>
+      <h2 id="p5">Integration</h2>
+      <p>How do you add up infinitely many tiny pieces, and what does that have to do with slopes?</p>
+    </header>
+    <ol class="lessons" start="22">
+      <li><a class="lesson" href="riemann-sums.html">
+        <span class="num">22</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><rect x="10" y="62" width="22" height="12" fill="var(--pos)" stroke="var(--acc)"/><rect x="32" y="52" width="22" height="22" fill="var(--pos)" stroke="var(--acc)"/><rect x="54" y="38" width="22" height="36" fill="var(--pos)" stroke="var(--acc)"/><rect x="76" y="20" width="22" height="54" fill="var(--pos)" stroke="var(--acc)"/><rect x="98" y="6" width="22" height="68" fill="var(--pos)" stroke="var(--acc)"/><path d="M10 72 Q70 60 122 6" stroke="var(--ink)" stroke-width="2" fill="none"/></svg>
+        <span class="body"><h3>Approximating integrals</h3><span class="sub">Adding up rectangles</span><span class="q">How close can rectangles get to the area under a curve?</span><span class="does">Left, right and midpoint sums, computed by hand.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="definite-integral.html">
+        <span class="num">23</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><rect x="10" y="62" width="9" height="12" fill="var(--pos)"/><rect x="19" y="58" width="9" height="16" fill="var(--pos)"/><rect x="28" y="54" width="9" height="20" fill="var(--pos)"/><rect x="37" y="49" width="9" height="25" fill="var(--pos)"/><rect x="46" y="44" width="9" height="30" fill="var(--pos)"/><rect x="55" y="38" width="9" height="36" fill="var(--pos)"/><rect x="64" y="32" width="9" height="42" fill="var(--pos)"/><rect x="73" y="26" width="9" height="48" fill="var(--pos)"/><rect x="82" y="20" width="9" height="54" fill="var(--pos)"/><rect x="91" y="15" width="9" height="59" fill="var(--pos)"/><rect x="100" y="10" width="9" height="64" fill="var(--pos)"/><rect x="109" y="6" width="9" height="68" fill="var(--pos)"/><path d="M10 64 Q70 50 118 6" stroke="var(--ink)" stroke-width="2" fill="none"/></svg>
+        <span class="body"><h3>The definite integral as a limit</h3><span class="sub">Infinitely many rectangles</span><span class="q">What happens to a Riemann sum when the number of rectangles grows without bound?</span><span class="does">The definite integral defined as a limit of Riemann sums.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="fundamental-theorem.html">
+        <span class="num">24</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 50 Q40 10 70 30 T124 40" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M8 50 Q40 10 70 30 L70 76 L8 76 Z" fill="var(--pos)"/><line x1="70" y1="6" x2="70" y2="76" stroke="var(--acc)" stroke-width="2.5"/></svg>
+        <span class="body"><h3>The Fundamental Theorem of Calculus</h3><span class="sub">Slope and area, undone</span><span class="q">If differentiating undoes integrating, are slope and area opposites?</span><span class="does">Both parts of the Fundamental Theorem of Calculus.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="antiderivatives.html">
+        <span class="num">25</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M8 70 Q66 -10 124 70" stroke="var(--ink)" stroke-width="2" fill="none" transform="translate(0,6)"/><path d="M8 70 Q66 -10 124 70" stroke="var(--indigo)" stroke-width="1.5" stroke-dasharray="5 4" fill="none" transform="translate(0,-8)"/><path d="M8 70 Q66 -10 124 70" stroke="var(--acc)" stroke-width="2" fill="none" transform="translate(0,-22)"/></svg>
+        <span class="body"><h3>Antiderivatives and basic integrals</h3><span class="sub">Running derivatives backwards</span><span class="q">You know the derivative. How many functions could it have come from?</span><span class="does">Antiderivatives, the power rule in reverse, and simplifying before integrating.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="substitution.html">
+        <span class="num">26</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M6 70 Q30 20 60 50 L60 74 L6 74 Z" fill="var(--pos)"/><path d="M6 70 Q30 20 60 50" stroke="var(--ink)" stroke-width="2" fill="none"/><rect x="74" y="40" width="52" height="34" fill="var(--neg)"/><line x1="74" y1="40" x2="126" y2="40" stroke="var(--indigo)" stroke-width="2"/><path d="M62 30 L72 30" stroke="var(--acc)" stroke-width="2.5"/><path d="M68 25 L73 30 L68 35" stroke="var(--acc)" stroke-width="2.5" fill="none"/></svg>
+        <span class="body"><h3>Integration by substitution</h3><span class="sub">Changing the variable</span><span class="q">An integral looks impossible until you rename part of it. Which part?</span><span class="does">u-substitution for indefinite and definite integrals.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="area-under-a-curve.html">
+        <span class="num">27</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><line x1="0" y1="40" x2="132" y2="40" stroke="var(--rule)"/><path d="M8 40 Q30 2 52 40 Z" fill="var(--pos)"/><path d="M52 40 Q74 78 96 40 Z" fill="var(--neg)"/><path d="M96 40 Q110 14 124 40 Z" fill="var(--pos)"/><path d="M8 40 Q30 2 52 40 Q74 78 96 40 Q110 14 124 40" stroke="var(--ink)" stroke-width="2" fill="none"/></svg>
+        <span class="body"><h3>Area under a curve</h3><span class="sub">Net area and total area</span><span class="q">When a graph dips below the axis, does its area count against you?</span><span class="does">Net area, total area, and splitting an integral at the zeros.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="area-between-curves.html">
+        <span class="num">28</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><path d="M10 62 Q66 -6 122 62 Q66 46 10 62 Z" fill="var(--acc-wash)"/><path d="M10 62 Q66 -6 122 62" stroke="var(--ink)" stroke-width="2" fill="none"/><path d="M10 62 Q66 46 122 62" stroke="var(--indigo)" stroke-width="2" fill="none"/><rect x="62" y="28" width="8" height="26" fill="var(--acc)"/></svg>
+        <span class="body"><h3>Area between curves</h3><span class="sub">Top minus bottom</span><span class="q">How do you find an area when the bottom edge is another curve?</span><span class="does">Area between two curves, with intersections and crossings.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+      <li><a class="lesson" href="average-value.html">
+        <span class="num">29</span>
+        <svg class="glyph" viewBox="0 0 132 80" aria-hidden="true"><rect x="12" y="38" width="108" height="36" fill="var(--pos)"/><path d="M12 72 Q60 70 120 8" stroke="var(--ink)" stroke-width="2" fill="none"/><line x1="4" y1="38" x2="128" y2="38" stroke="var(--acc)" stroke-width="2.5"/><circle cx="92" cy="38" r="4.5" fill="var(--indigo)"/></svg>
+        <span class="body"><h3>The Mean Value Theorem for integrals</h3><span class="sub">Levelling the area</span><span class="q">If the region under a curve were water, how high would it settle?</span><span class="does">Average value of a function and the Mean Value Theorem for integrals.</span></span>
+        <span class="go">Open lesson</span>
+      </a></li>
+    </ol>
+  </section>
+
+  <section class="how" aria-labelledby="h-how">
+    <h2 id="h-how">How to use these lessons</h2>
+    <p>Try each question before you open its answer. The step-by-step solvers count how many steps you get right on the first try, so a wrong guess costs you a point but nothing else. What you work out yourself is what you will remember on the test.</p>
+  </section>
+
+  <footer><a href="instructor-guide.html" style="color:var(--indigo)">Instructor guide</a><br>© 2026 Fedoruk Publishing</footer>
+</main>
+
+</body>
+</html>

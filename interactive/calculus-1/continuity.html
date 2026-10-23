@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Continuity and the IVT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aleo:wght@400;600;700&family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+
+/* Fedoruk brand: paper ground, indigo type and structure, ochre as the single accent (the quantity the learner moves). Aleo headings, Montserrat body. */
+:root{
+  --paper:#F4F0E8; --grid:#ECE7DC; --grid-major:#E2DBCD; --sheet:#FFFFFF;
+  --indigo:#2B2E6E; --ink:#1E1E24; --ink-soft:#56576B; --rule:#C9C4D4;
+  --acc:#C08A2E; --acc-text:#865A12; --acc-wash:rgba(192,138,46,.18);
+  --alt:#2B2E6E; --alt-wash:rgba(43,46,110,.12); --pos:rgba(192,138,46,.30); --neg:rgba(43,46,110,.22);
+  --bad:#A3302A; --pass:#2F6B3F;
+  --display:"Aleo",Rockwell,"Roboto Slab",Georgia,serif;
+  --text:"Montserrat","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#181A40; --grid:#1D1F4A; --grid-major:#232654; --sheet:#20234F;
+  --indigo:#F4F0E8; --ink:#F4F0E8; --ink-soft:#B7B6CC; --rule:#41447A;
+  --acc:#D9A548; --acc-text:#E2B460; --acc-wash:rgba(217,165,72,.2);
+  --alt:#AEB1EE; --alt-wash:rgba(174,177,238,.16); --pos:rgba(217,165,72,.32); --neg:rgba(174,177,238,.26);
+  --bad:#F08A7E; --pass:#9CD3A8; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#181A40; --grid:#1D1F4A; --grid-major:#232654; --sheet:#20234F;
+  --indigo:#F4F0E8; --ink:#F4F0E8; --ink-soft:#B7B6CC; --rule:#41447A;
+  --acc:#D9A548; --acc-text:#E2B460; --acc-wash:rgba(217,165,72,.2);
+  --alt:#AEB1EE; --alt-wash:rgba(174,177,238,.16); --pos:rgba(217,165,72,.32); --neg:rgba(174,177,238,.26);
+  --bad:#F08A7E; --pass:#9CD3A8; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-major) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-major) 1px,transparent 1px),
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+  color:var(--ink);font-family:var(--text);font-size:1rem;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 56px;
+}
+.sheet{
+  max-width:1000px;margin:0 auto;
+  border:2px solid var(--indigo);outline:1px solid var(--indigo);outline-offset:5px;
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  padding:clamp(20px,5vw,56px);display:grid;gap:64px;
+}
+.col{max-width:66ch;display:grid;gap:18px}
+.wide{max-width:none}
+.measure{max-width:66ch}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;color:var(--indigo)}
+h1{font-size:clamp(2.3rem,6.4vw,4rem);line-height:1.05}
+h2{font-size:clamp(1.6rem,3.6vw,2.1rem);line-height:1.15;font-weight:600}
+h3{font-size:1.2rem;line-height:1.25;font-weight:600}
+p{margin:0}
+.lede{font-size:1.15rem;line-height:1.6}
+.accc{color:var(--acc-text)} .altc{color:var(--alt)}
+strong{font-weight:700}
+math{font-size:1.08em;font-family:"STIX Two Math","Latin Modern Math","Cambria Math",math}
+.display{display:block;overflow-x:auto;padding-block:6px}
+.display math{font-size:1.2em}
+.lab{font-weight:600;font-size:.9rem;color:var(--ink-soft)}
+
+/* instrument */
+.fig{background:var(--sheet);border:1.5px solid var(--indigo);display:grid;grid-template-columns:minmax(0,1fr) 280px}
+.plot{border-right:1.5px solid var(--indigo);min-width:0;display:grid;align-content:start}
+.plot svg{width:100%;height:auto;display:block;touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none}
+svg [data-h]{touch-action:none}
+.hint{padding:8px 16px 12px;color:var(--ink-soft);font-size:.9rem;border-top:1px solid var(--rule)}
+.side{display:grid;align-content:start;min-width:0}
+.ctl{padding:14px 16px;border-bottom:1px solid var(--rule);display:grid;gap:6px}
+.ctl .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ctl output{font-variant-numeric:tabular-nums;font-weight:700}
+select{font:inherit;color:var(--ink);background:var(--sheet);border:1.5px solid var(--indigo);padding:6px 8px;width:100%;min-width:0}
+input[type=range]{width:100%;margin:2px 0;accent-color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips label{position:relative;display:block}
+.chips input{position:absolute;opacity:0;inset:0}
+.chips span{display:block;border:1px solid var(--rule);padding:5px 12px;font-size:.9rem;cursor:pointer;background:var(--sheet)}
+.chips input:checked + span{border-color:var(--indigo);box-shadow:inset 0 0 0 1px var(--indigo);background:var(--paper)}
+.chips input:focus-visible + span{outline:2px solid var(--alt);outline-offset:2px}
+.checks{padding:12px 16px;border-bottom:1px solid var(--rule);display:grid;gap:6px}
+.checks label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.checks input{accent-color:var(--indigo);width:1.05rem;height:1.05rem;margin:0;flex:none}
+.checks input:disabled + span{opacity:.45}
+.btns{display:flex;flex-wrap:wrap;gap:8px;padding:14px 16px}
+button{font:inherit;font-weight:600;font-size:.95rem;color:var(--ink);background:transparent;border:1.5px solid var(--indigo);padding:6px 14px;cursor:pointer;line-height:1.3}
+button.primary{background:var(--indigo);border-color:var(--indigo);color:var(--sheet)}
+button:hover{background:var(--paper)}
+button.primary:hover{opacity:.88;background:var(--indigo)}
+button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:2px solid var(--alt);outline-offset:2px}
+
+.tblock{grid-column:1 / -1;border-top:1.5px solid var(--indigo);display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1.1fr}
+.tblock > div{padding:8px 12px;border-right:1px solid var(--indigo);min-width:0}
+.tblock > div:last-child{border-right:0}
+.tblock .k{font-weight:600;font-size:.8rem;color:var(--ink-soft);line-height:1.3}
+.tblock .v{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.05rem;overflow-x:auto;white-space:nowrap}
+.status-ok{color:var(--pass)} .status-bad{color:var(--bad)}
+.verdict{grid-column:1 / -1;border-top:1px solid var(--rule);padding:14px 16px;min-height:4.2em}
+.qtable{grid-column:1 / -1;border-top:1.5px solid var(--indigo);padding:14px 16px;display:grid;gap:8px;min-width:0}
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{font-weight:600;color:var(--ink-soft);font-size:.85rem}
+tr:last-child td{border-bottom:0}
+tr.now td{background:var(--acc-wash)}
+
+dl{margin:0;display:grid;gap:18px}
+dl > div{display:grid;grid-template-columns:minmax(0,14rem) minmax(0,1fr);gap:20px;border-top:1px solid var(--rule);padding-top:14px}
+dt{font-weight:700}
+dd{margin:0;display:grid;gap:10px;justify-items:start}
+.note{border-left:3px solid var(--acc);padding-left:14px}
+
+/* solver */
+.solver{border:1.5px solid var(--indigo);background:var(--sheet);display:grid}
+.solver .top{padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between}
+.score{display:flex;gap:22px;font-variant-numeric:tabular-nums}
+.score div{display:grid}
+.score b{font-size:1.35rem;font-family:var(--display);font-weight:700;line-height:1.2;color:var(--indigo)}
+.solver .prob{padding:18px;border-bottom:1px solid var(--rule)}
+.solver .prob math{font-size:1.45em}
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.steps > li{counter-increment:s;display:grid;grid-template-columns:2.4rem minmax(0,1fr);gap:4px 12px;padding:16px 18px;border-bottom:1px solid var(--rule)}
+ol.steps > li::before{content:counter(s);font-family:var(--display);font-weight:700;color:var(--indigo);font-size:1.3rem;line-height:1.3}
+ol.steps > li > div{min-width:0;display:grid;gap:10px}
+.q{font-weight:600}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.opt{text-align:left;font-weight:400;background:var(--sheet);border:1.5px solid var(--rule);padding:10px 12px;min-height:3rem}
+.opt:hover{border-color:var(--indigo);background:var(--paper)}
+.opt.wrong{border-color:var(--bad);opacity:.7}
+.opt.right{border-color:var(--pass);box-shadow:inset 0 0 0 1px var(--pass)}
+.fb{font-size:.95rem}
+form.inline{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+input[type=text]{font:inherit;color:var(--ink);background:var(--sheet);border:1.5px solid var(--indigo);padding:6px 10px;width:12ch;font-variant-numeric:tabular-nums}
+.solver .foot{padding:14px 18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+@media (max-width:820px){
+  .fig{grid-template-columns:1fr}
+  .plot{border-right:0;border-bottom:1.5px solid var(--indigo)}
+  .tblock{grid-template-columns:1fr 1fr}
+  .tblock > div{border-bottom:1px solid var(--indigo)}
+  .tblock > div:nth-child(2n){border-right:0}
+  .tblock > div:first-child{grid-column:1 / -1;border-right:0}
+  .tblock > div:last-child{grid-column:1 / -1;border-bottom:0}
+  dl > div{grid-template-columns:1fr;gap:6px}
+}
+@media (max-width:480px){ .sheet{outline-offset:3px;gap:48px} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* additions for the full series */
+.plot svg + svg{border-top:1px solid var(--rule)}
+.plot .cap{padding:6px 16px 0;font-weight:600;font-size:.85rem;color:var(--ink-soft)}
+.opt svg{display:block;width:100%;height:auto;max-width:220px}
+.opts.graphs{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.solver .prob svg{display:block;width:100%;max-width:520px;height:auto}
+.solver .prob{display:grid;gap:10px}
+.inline-out{font-variant-numeric:tabular-nums;font-weight:700}
+.status-ok{color:var(--pass)} .status-bad{color:var(--bad)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.scene{display:block;width:100%;height:auto}
+.pillrow{display:flex;flex-wrap:wrap;gap:6px}
+.chk{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.chk li{display:flex;gap:10px;align-items:baseline}
+.chk .mark{font-weight:700;min-width:2.6em}
+a{color:var(--indigo);text-underline-offset:3px}
+@media (max-width:820px){ .two{grid-template-columns:1fr} }
+
+.subtitle{font-family:var(--display);font-weight:600;font-size:clamp(1.25rem,3vw,1.6rem);line-height:1.2;color:var(--acc-text);margin-top:-8px}
+
+</style>
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<main class="sheet">
+<nav aria-label="Lessons" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;font-size:.95rem"><a class="lockup" href="index.html" aria-label="Fedoruk Publishing, all lessons" style="display:inline-flex;align-items:center;gap:.68em;color:var(--indigo);text-decoration:none;line-height:1;font-size:17.9px"><svg viewBox="17.852 3.993 131.441 31.685" width="6.704em" height="1.616em" aria-hidden="true" focusable="false" style="display:block;color:var(--indigo);flex:none"><path fill="currentColor" fill-rule="nonzero" transform="translate(-10.102788 -38.914444)" d="M54.924 73.304Q52.04 73.304 49.887 72Q47.733 70.696 46.548 68.286Q45.441 66.036 45.368 63.029H35.155V70.646L37.198 71.082Q37.49 71.118 37.635 71.319Q37.781 71.519 37.781 71.848V73.343H28.955V71.848Q28.955 71.519 29.101 71.319Q29.247 71.118 29.538 71.082L31.581 70.646V49.889L29.538 49.453Q29.247 49.38 29.101 49.198Q28.955 49.016 28.955 48.687V47.192H47.702V53.392H46.024Q45.732 53.392 45.532 53.265Q45.331 53.137 45.258 52.809L44.848 50.073H35.155V60.823H45.485Q45.737 59.055 46.508 57.539Q47.654 55.286 49.768 53.983Q51.882 52.679 54.727 52.679Q57.216 52.679 59.073 53.785Q60.93 54.891 61.977 56.887Q63.024 58.882 63.024 61.648Q63.024 62.477 62.846 62.754Q62.668 63.031 62.155 63.031H48.839V63.544Q49.037 66.863 50.697 68.7Q52.356 70.538 55.201 70.538Q56.426 70.538 57.631 70.044Q58.836 69.55 59.764 69.076Q60.693 68.602 61.088 68.602Q61.523 68.602 61.76 68.918L62.747 70.222Q61.957 71.249 60.634 71.94Q59.31 72.632 57.809 72.968Q56.307 73.304 54.924 73.304ZM71.392 73.304Q68.942 73.304 67.243 72.039Q65.544 70.775 64.675 68.463Q63.806 66.152 63.806 63.07Q63.806 60.146 64.833 57.795Q65.86 55.444 67.816 54.042Q69.772 52.639 72.459 52.639Q74.316 52.639 75.62 53.271Q76.923 53.904 77.951 55.01V46.829L75.738 46.357Q75.422 46.278 75.264 46.08Q75.106 45.883 75.106 45.527V43.907H81.467V70.105L83.68 70.577Q83.996 70.617 84.154 70.834Q84.312 71.051 84.312 71.407V73.027H79.373Q78.583 73.027 78.425 72.276L78.109 69.866Q76.805 71.407 75.165 72.355Q73.526 73.304 71.392 73.304ZM94.023 52.679Q94.373 52.679 94.71 52.696Q95.97 52.761 97.062 53.068L97.062 53.068Q97.66 53.237 98.208 53.478Q98.694 53.692 99.14 53.963Q99.355 54.093 99.559 54.234L99.564 54.238Q100.663 54.997 101.473 56.067Q101.811 56.512 102.098 57.012Q102.113 57.038 102.128 57.064Q102.27 57.314 102.4 57.578Q103.546 59.909 103.546 62.991Q103.546 66.073 102.4 68.404Q101.254 70.735 99.14 72.019Q98.694 72.291 98.208 72.505Q98.118 72.544 98.028 72.581Q96.276 73.304 94.023 73.304Q92.961 73.304 92 73.134Q90.317 72.837 88.946 72.019Q86.793 70.735 85.627 68.404Q84.462 66.073 84.462 62.991Q84.462 59.909 85.627 57.578Q86.793 55.247 88.946 53.963Q91.1 52.679 94.023 52.679ZM154.365 73.276Q153.931 73.276 153.654 73.099Q153.378 72.921 153.061 72.565L146.463 64.386Q146.186 63.952 145.89 63.833Q145.594 63.715 145.001 63.715H144.013V70.355L146.226 70.827Q146.542 70.866 146.7 71.084Q146.858 71.301 146.858 71.656V73.276H137.652V71.656Q137.652 71.301 137.81 71.084Q137.968 70.866 138.284 70.827L140.497 70.355V47.078L138.284 46.606Q137.968 46.527 137.81 46.33Q137.652 46.132 137.652 45.777V44.157H144.013V61.305H144.922Q145.317 61.305 145.594 61.186Q145.87 61.067 146.147 60.751L150.655 55.905L149.663 55.694Q149.347 55.615 149.189 55.417Q149.031 55.22 149.031 54.864V53.244H157.131V54.864Q157.131 55.22 156.973 55.417Q156.815 55.615 156.499 55.694L154.312 56.161L149.663 61.107Q149.387 61.384 149.13 61.66Q148.873 61.937 148.518 62.134Q149.189 62.608 149.703 63.399L155.143 70.268L157.763 70.827Q158.079 70.866 158.237 71.084Q158.395 71.301 158.395 71.656V73.276ZM124.029 73.592Q121.856 73.592 120.355 72.624Q118.853 71.656 118.083 69.957Q117.312 68.258 117.312 66.006V56.166L115.1 55.694Q114.784 55.615 114.626 55.417Q114.468 55.219 114.468 54.864V53.244H120.829V66.006Q120.829 68.298 121.876 69.542Q122.923 70.787 125.057 70.787Q126.598 70.787 127.961 70.056Q129.324 69.325 130.47 68.021V56.166L128.257 55.694Q127.941 55.615 127.783 55.417Q127.625 55.219 127.625 54.864V53.244H133.986V70.354L136.199 70.826Q136.515 70.866 136.673 71.083Q136.831 71.301 136.831 71.656V73.276H131.892Q131.102 73.276 130.944 72.525L130.667 70.392Q129.363 71.814 127.743 72.703Q126.123 73.592 124.029 73.592ZM94.023 70.538Q96.987 70.538 98.449 68.562Q99.911 66.587 99.911 63.031Q99.911 60.62 99.259 58.941Q98.607 57.262 97.303 56.353Q95.999 55.444 94.023 55.444Q92.008 55.444 90.685 56.373Q89.361 57.301 88.729 59Q88.097 60.699 88.097 63.031Q88.097 66.468 89.559 68.503Q91.021 70.538 94.023 70.538ZM72.538 70.459Q74.276 70.459 75.56 69.669Q76.844 68.878 77.951 67.416V57.736Q76.963 56.432 75.817 55.919Q74.671 55.405 73.249 55.405Q71.392 55.405 70.088 56.294Q68.784 57.183 68.112 58.902Q67.441 60.62 67.441 63.07Q67.441 66.666 68.666 68.562Q69.89 70.459 72.538 70.459ZM99.114 52.398H106.296Q108.74 52.398 110.426 53.052Q112.155 53.723 113.074 55.048Q113.995 56.376 113.995 58.339Q113.995 59.886 113.35 61.115Q112.707 62.341 111.529 63.177Q110.649 63.8 109.531 64.17Q109.716 64.36 109.899 64.599L114.13 70.369L115.538 70.669Q115.916 70.723 116.123 71.007Q116.309 71.263 116.309 71.641V73.177H113.017Q112.049 73.177 111.601 72.413L106.426 65.29Q106.234 65.035 106.037 64.936Q105.841 64.838 105.376 64.838H104.441V62.075H106.157Q108.278 62.075 109.453 61.129Q110.59 60.215 110.59 58.534Q110.59 56.943 109.558 56.155Q108.478 55.329 106.296 55.329H103.732V55.332H103.25ZM48.958 60.818H59.863Q59.863 58.368 58.52 56.827Q57.176 55.286 54.806 55.286Q52.237 55.286 50.776 56.748Q49.314 58.21 48.958 60.818Z"/></svg><span aria-hidden="true" style="align-self:stretch;width:1px;background:var(--indigo)"></span><span aria-hidden="true" style="font-family:var(--display);font-weight:400;letter-spacing:.01em;color:var(--indigo)">Publishing</span></a><a href="index.html" style="color:var(--indigo);font-weight:600;text-underline-offset:3px">All lessons</a><span style="color:var(--ink-soft)">Lesson 8 of 29</span></nav>
+
+<section class="col" aria-labelledby="t">
+  <h1 id="t">Continuity and the Intermediate Value Theorem</h1>
+  <p class="subtitle">Without lifting the pencil</p>
+  <p class="lede">A continuous function is often described as one you can draw without lifting your pencil. That is a good picture, but what exactly has to be true at a point for the pencil to stay down?</p>
+  <p>Below, each function is checked against the three conditions in the definition. Find out which condition fails at each kind of break, then use the last function to repair a break yourself.</p>
+</section>
+
+<section class="fig" id="instrument" aria-label="Continuity checker">
+  <div class="plot">
+    <svg id="svg" viewBox="0 0 720 420" role="img" aria-label="Graph of the chosen function near x = a"></svg>
+    <p class="hint">For the last function, drag the slider for k until the two pieces meet.</p>
+  </div>
+  <div class="side">
+    <div class="ctl"><label for="pSel" class="lab">Function</label><select id="pSel"></select></div>
+    <div class="ctl" id="kCtl" hidden>
+      <div class="row"><label for="kVal" class="lab accc">k</label><output id="kOut" for="kVal"></output></div>
+      <input type="range" id="kVal" min="0" max="400" step="1" value="100">
+    </div>
+    <div class="ctl" style="border-bottom:0">
+      <span class="lab">The three conditions at x = a</span>
+      <ul class="chk" id="checks"></ul>
+    </div>
+  </div>
+  <div class="tblock">
+    <div><div class="k">Function</div><div class="v" id="tbFn"></div></div>
+    <div><div class="k">f(a)</div><div class="v" id="tbFa"></div></div>
+    <div><div class="k">Left limit</div><div class="v" id="tbL"></div></div>
+    <div><div class="k">Right limit</div><div class="v" id="tbR"></div></div>
+    <div><div class="k">Verdict</div><div class="v" id="tbV"></div></div>
+  </div>
+  <p class="verdict" id="verdict" aria-live="polite"></p>
+</section>
+
+<section class="col" aria-labelledby="h-def">
+  <h2 id="h-def">The definition</h2>
+  <p>A function <span class="tex">f</span> is continuous at <span class="tex">a</span> when</p>
+  <div class="tex display">\lim_{x\to a}f(x)=f(a).</div>
+  <p>That one equation packs in three conditions: <span class="tex">f(a)</span> is defined, the limit exists, and the two are equal. Each kind of discontinuity breaks a different one.</p>
+  <dl>
+    <div><dt>Removable</dt><dd><p>The limit exists, but <span class="tex">f(a)</span> is missing or has the wrong value. Redefining one point fixes it.</p></dd></div>
+    <div><dt>Jump</dt><dd><p>The one-sided limits exist but differ, so the limit does not exist. No single value at <span class="tex">a</span> can fix it.</p></dd></div>
+    <div><dt>Infinite</dt><dd><p>At least one side grows without bound, usually at a vertical asymptote.</p></dd></div>
+  </dl>
+  <p>Polynomials, rational functions, roots, and the trigonometric, exponential and logarithmic functions are continuous at every point of their domains. Sums, products, quotients and compositions of continuous functions are continuous too, where they are defined. That is why direct substitution works so often.</p>
+</section>
+
+<section class="col" aria-labelledby="h-ivt">
+  <h2 id="h-ivt">The Intermediate Value Theorem</h2>
+  <p>Suppose <span class="tex">f</span> is continuous on <span class="tex">[a,b]</span> and <span class="tex">N</span> is any number between <span class="tex">f(a)</span> and <span class="tex">f(b)</span>. Then there is at least one <span class="tex">c</span> in <span class="tex">(a,b)</span> with <span class="tex">f(c)=N</span>.</p>
+  <p>The theorem says a root exists without telling you where. Bisection turns it into a method: check the sign at the midpoint and keep the half where the sign changes. Each step halves the interval that must contain the root. How many steps would it take to pin a root down to three decimal places?</p>
+</section>
+
+<section class="fig" id="ivt" aria-label="Bisection with the Intermediate Value Theorem">
+  <div class="plot">
+    <svg id="svg2" viewBox="0 0 720 400" role="img" aria-label="Graph with a bracketing interval for a root"></svg>
+    <p class="hint">Drag the ochre endpoints along the x-axis, or bisect. The indigo line is the target height N.</p>
+  </div>
+  <div class="side">
+    <div class="ctl"><label for="iSel" class="lab">Function</label><select id="iSel"></select></div>
+    <div class="ctl">
+      <div class="row"><label for="nVal" class="lab altc">Target N</label><output id="nOut" for="nVal"></output></div>
+      <input type="range" id="nVal" min="0" max="1000" step="1" value="500">
+    </div>
+    <div class="btns">
+      <button type="button" class="primary" id="bisect">Bisect</button>
+      <button type="button" id="ivtReset">Reset</button>
+    </div>
+  </div>
+  <p class="verdict" id="ivtMsg" aria-live="polite"></p>
+  <div class="qtable">
+    <span class="lab">Bisection steps</span>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Step</th><th>a</th><th>b</th><th>Midpoint m</th><th>f(m) − N</th><th>Width</th></tr></thead>
+      <tbody id="ivtBody"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="col wide" aria-labelledby="h-solve">
+  <h2 id="h-solve">Solve it step by step</h2>
+  <p class="measure">Check continuity one condition at a time, and decide what the Intermediate Value Theorem guarantees. The score counts steps you answer correctly on the first try.</p>
+  <div class="solver">
+    <div class="top">
+      <div class="score">
+        <div><span class="lab">Problems solved</span><b id="sSolved">0</b></div>
+        <div><span class="lab">First-try steps</span><b id="sFirst">0 of 0</b></div>
+      </div>
+      <button type="button" id="sNew">New problem</button>
+    </div>
+    <div class="prob" id="sProb"></div>
+    <ol class="steps" id="sSteps"></ol>
+    <div class="foot" id="sFoot" hidden>
+      <button type="button" class="primary" id="sNext">Next problem</button>
+      <button type="button" id="sGraph">See this one in the graph</button>
+    </div>
+  </div>
+</section>
+
+<section class="col" aria-labelledby="h-pit">
+  <h2 id="h-pit">Common mistakes</h2>
+  <dl>
+    <div><dt>Checking only that f(a) exists</dt><dd><p>A function can be defined at <span class="tex">a</span> and still be discontinuous there, as with a jump or a misplaced point.</p></dd></div>
+    <div><dt>Using the IVT without continuity</dt><dd><p><span class="tex">\tfrac1x</span> is negative at <span class="tex">-1</span> and positive at 1, yet it is never 0. The theorem needs continuity on the whole closed interval. Choose it in the bisection graph and watch where bisection ends up.</p></dd></div>
+    <div><dt>Reading the IVT backwards</dt><dd><p>If <span class="tex">f(a)</span> and <span class="tex">f(b)</span> have the same sign, the theorem guarantees nothing. There may still be roots in between, an even number of them.</p></dd></div>
+  </dl>
+</section>
+
+<nav aria-label="Next lesson" class="col"><p><span class="lab">Next lesson</span><br><a href="within-tolerance.html" style="color:var(--indigo);font-weight:600;text-underline-offset:3px;font-family:var(--display);font-size:1.3rem">The precise definition of a limit</a></p></nav>
+
+<footer class="col"><p class="lab">© 2026 Fedoruk Publishing</p></footer>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+/* Shared toolkit for the Calculus 1 series: typesetting, formatting, plotting, dragging, view animation, and the step-by-step solver. */
+window.L=(function(){
+"use strict";
+const L={};
+L.$=id=>document.getElementById(id);
+L.reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+L.T=function(tex,display){ if(!window.katex) return tex; try{ return katex.renderToString(tex,{output:'mathml',displayMode:!!display,throwOnError:false}); }catch(e){ return tex; } };
+L.typeset=function(root){ (root||document).querySelectorAll('.tex').forEach(el=>{ if(window.katex&&!el.dataset.done){ el.innerHTML=L.T(el.textContent,el.classList.contains('display')); el.dataset.done='1'; } }); };
+L.clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+L.toLog=(v,lo,hi)=>Math.exp(Math.log(lo)+v/1000*(Math.log(hi)-Math.log(lo)));
+L.fromLog=(x,lo,hi)=>Math.round(1000*(Math.log(x)-Math.log(lo))/(Math.log(hi)-Math.log(lo)));
+L.fmt=function(v,p){
+  if(v===Infinity) return '∞'; if(v===-Infinity) return '−∞';
+  if(v==null||!isFinite(v)) return 'undefined';
+  if(Math.abs(v)<1e-10) return '0';
+  let s=Number(v.toPrecision(p||5)).toString();
+  if(/e/.test(s)){ const e=Math.floor(Math.log10(Math.abs(v))); const sup=String(e).replace(/[-0-9]/g,c=>'⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(c)]); s=(v/Math.pow(10,e)).toFixed(2).replace(/\.?0+$/,'')+' × 10'+sup; }
+  return s.replace(/^-/,'−');
+};
+L.shuffle=a=>{ const r=a.slice(); for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; };
+L.deriv=(f,x,h)=>{ h=h||1e-5*Math.max(1,Math.abs(x)); return (f(x+h)-f(x-h))/(2*h); };
+
+/* ---------- plotting ---------- */
+const NS='http://www.w3.org/2000/svg';
+L.FONT='Montserrat, Segoe UI, sans-serif';
+L.el=function(tag,a,t){ const e=document.createElementNS(NS,tag); for(const k in a) if(a[k]!=null) e.setAttribute(k,a[k]); if(t!=null) e.textContent=t; return e; };
+L.plot=function(svg,v,o){
+  o=o||{};
+  const vb=svg.viewBox.baseVal, W=vb&&vb.width?vb.width:720, H=vb&&vb.height?vb.height:460;
+  const ML=o.ml??56, MR=o.mr??16, MT=o.mt??14, MB=o.mb??40, PW=W-ML-MR, PH=H-MT-MB;
+  const X=x=>ML+(x-v.x0)/(v.x1-v.x0)*PW, Y=y=>MT+(v.y1-y)/(v.y1-v.y0)*PH;
+  const Xi=px=>v.x0+(px-ML)/PW*(v.x1-v.x0), Yi=py=>v.y1-(py-MT)/PH*(v.y1-v.y0);
+  svg.textContent='';
+  const cid='clip-'+svg.id;
+  const defs=L.el('defs',{}), cp=L.el('clipPath',{id:cid}); cp.appendChild(L.el('rect',{x:ML,y:MT,width:PW,height:PH})); defs.appendChild(cp); svg.appendChild(defs);
+  svg.appendChild(L.el('rect',{x:ML,y:MT,width:PW,height:PH,fill:'var(--sheet)',stroke:'var(--rule)'}));
+  const g=L.el('g',{'clip-path':'url(#'+cid+')'}); svg.appendChild(g);
+  const top=L.el('g',{}); svg.appendChild(top);
+  const P={svg,v,X,Y,Xi,Yi,ML,MT,PW,PH,W,H,g,top};
+  P.axes=function(){
+    if(v.y0<0&&v.y1>0) g.appendChild(L.el('line',{x1:ML,x2:ML+PW,y1:Y(0),y2:Y(0),stroke:'var(--rule)','stroke-width':1.25}));
+    if(v.x0<0&&v.x1>0) g.appendChild(L.el('line',{x1:X(0),x2:X(0),y1:MT,y2:MT+PH,stroke:'var(--rule)','stroke-width':1.25}));
+    return P;
+  };
+  P.grid=function(dx,dy){
+    if(dx) for(let x=Math.ceil(v.x0/dx)*dx;x<=v.x1;x+=dx) g.appendChild(L.el('line',{x1:X(x),x2:X(x),y1:MT,y2:MT+PH,stroke:'var(--grid-major)','stroke-width':1}));
+    if(dy) for(let y=Math.ceil(v.y0/dy)*dy;y<=v.y1;y+=dy) g.appendChild(L.el('line',{x1:ML,x2:ML+PW,y1:Y(y),y2:Y(y),stroke:'var(--grid-major)','stroke-width':1}));
+    return P;
+  };
+  P.path=function(fn,s){
+    s=s||{}; const n=s.n||700, from=s.from??v.x0, to=s.to??v.x1, cuts=s.cuts||[], jump=s.jump??0.9;
+    let d='',pen=false,prev=null;
+    for(let i=0;i<=n;i++){
+      const x=from+(to-from)*i/n;
+      if(cuts.some(c=>Math.abs(x-c)<(v.x1-v.x0)*1e-7)){pen=false;continue;}
+      const y=fn(x); if(y==null||!isFinite(y)){pen=false;continue;}
+      const py=L.clamp(Y(y),-5000,5000);
+      if(pen&&Math.abs(py-prev)>PH*jump) pen=false;
+      d+=(pen?'L':'M')+X(x).toFixed(2)+' '+py.toFixed(2); pen=true; prev=py;
+    }
+    const e=L.el('path',{d,fill:'none',stroke:s.stroke||'var(--ink)','stroke-width':s.width||2,'stroke-dasharray':s.dash,'stroke-linejoin':'round',opacity:s.opacity});
+    (s.layer||g).appendChild(e); return e;
+  };
+  P.area=function(fn,a,b,s){ // signed area between curve and x-axis, split by sign
+    s=s||{}; const n=s.n||300;
+    const mk=(sign,fill)=>{ let d='';
+      for(let i=0;i<=n;i++){ const x=a+(b-a)*i/n, y=fn(x); const yy=(sign>0?Math.max(0,y):Math.min(0,y)); d+=(i?'L':'M')+X(x).toFixed(2)+' '+Y(isFinite(yy)?yy:0).toFixed(2); }
+      d+='L'+X(b).toFixed(2)+' '+Y(0).toFixed(2)+'L'+X(a).toFixed(2)+' '+Y(0).toFixed(2)+'Z';
+      g.appendChild(L.el('path',{d,fill,stroke:'none'})); };
+    mk(1,s.pos||'var(--pos)'); mk(-1,s.neg||'var(--neg)'); return P;
+  };
+  P.line=function(x1,y1,x2,y2,s){ s=s||{}; const e=L.el('line',{x1:X(x1),y1:Y(y1),x2:X(x2),y2:Y(y2),stroke:s.stroke||'var(--ink)','stroke-width':s.width||1.5,'stroke-dasharray':s.dash,opacity:s.opacity}); (s.layer||g).appendChild(e); return e; };
+  P.lineThrough=function(x0,y0,m,s){ return P.line(v.x0,y0+m*(v.x0-x0),v.x1,y0+m*(v.x1-x0),s); };
+  P.vline=function(x,s){ return P.line(x,v.y0,x,v.y1,s); };
+  P.hline=function(y,s){ return P.line(v.x0,y,v.x1,y,s); };
+  P.rect=function(x0,y0,x1,y1,s){ s=s||{}; const e=L.el('rect',{x:Math.min(X(x0),X(x1)),y:Math.min(Y(y0),Y(y1)),width:Math.abs(X(x1)-X(x0)),height:Math.abs(Y(y1)-Y(y0)),fill:s.fill||'var(--acc-wash)',stroke:s.stroke,'stroke-width':s.width,opacity:s.opacity}); (s.layer||g).appendChild(e); return e; };
+  P.poly=function(pts,s){ s=s||{}; const e=L.el('path',{d:pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(2)+' '+Y(p[1]).toFixed(2)).join('')+(s.close?'Z':''),fill:s.fill||'none',stroke:s.stroke||'var(--ink)','stroke-width':s.width||1.5,'stroke-dasharray':s.dash}); (s.layer||g).appendChild(e); return e; };
+  P.dot=function(x,y,s){ s=s||{}; const e=L.el('circle',{cx:X(x),cy:L.clamp(Y(y),-50,H+50),r:s.r||6,fill:s.hollow?'var(--sheet)':(s.fill||'var(--ink)'),stroke:s.hollow?(s.fill||'var(--ink)'):(s.stroke||'var(--sheet)'),'stroke-width':s.hollow?2:(s.sw||2)}); (s.layer||g).appendChild(e); return e; };
+  P.text=function(x,y,str,s){ s=s||{}; const e=L.el('text',{x:(s.px?x:X(x))+(s.dx||0),y:(s.px?y:Y(y))+(s.dy||0),'text-anchor':s.anchor||'start',fill:s.fill||'var(--ink)','font-family':L.FONT,'font-size':s.size||13,'font-weight':s.weight||600},str); (s.layer||top).appendChild(e); return e; };
+  P.xlabel=function(x,str,s){ s=s||{}; return P.text(X(x),MT+PH+20,str,Object.assign({px:true,anchor:'middle',fill:'var(--indigo)'},s)); };
+  P.ylabel=function(y,str,s){ s=s||{}; return P.text(ML-6,Y(y)+4,str,Object.assign({px:true,anchor:'end',fill:'var(--indigo)'},s)); };
+  P.ticks=function(xs,ys){ (xs||[]).forEach(x=>{ if(x>=v.x0&&x<=v.x1) P.xlabel(x,L.fmt(x,3),{weight:400,fill:'var(--ink-soft)'}); }); (ys||[]).forEach(y=>{ if(y>=v.y0&&y<=v.y1) P.ylabel(y,L.fmt(y,3),{weight:400,fill:'var(--ink-soft)'}); }); return P; };
+  P.handle=function(x,y,name,s){ s=s||{}; const e=L.el('circle',{cx:s.px?x:X(x),cy:s.px?y:L.clamp(Y(y),MT,MT+PH),r:s.r||22,fill:'transparent','data-h':name,style:'cursor:'+(s.cursor||'grab')}); top.appendChild(e); return e; };
+  P.handleRect=function(px,py,w,h,name,cursor){ const e=L.el('rect',{x:px,y:py,width:w,height:h,fill:'transparent','data-h':name,style:'cursor:'+(cursor||'grab')}); top.appendChild(e); return e; };
+  svg._P=P;
+  return P;
+};
+/* sample a function to pick a y-range; returns {y0,y1} */
+L.yrange=function(fns,x0,x1,o){
+  o=o||{}; const ys=[];
+  fns.forEach(fn=>{ for(let i=0;i<=400;i++){ const y=fn(x0+(x1-x0)*i/400); if(y!=null&&isFinite(y)) ys.push(y); } });
+  if(!ys.length) return {y0:-1,y1:1};
+  ys.sort((a,b)=>a-b);
+  const q=o.q??0.02; let lo=ys[Math.floor(ys.length*q)], hi=ys[Math.ceil(ys.length*(1-q))-1];
+  (o.include||[]).forEach(y=>{ if(isFinite(y)){ lo=Math.min(lo,y); hi=Math.max(hi,y); } });
+  if(o.zero){ lo=Math.min(lo,0); hi=Math.max(hi,0); }
+  const pad=(hi-lo)*(o.pad??0.15)||1; return {y0:lo-pad,y1:hi+pad};
+};
+/* drag helper: calls move(name,{x,y,px,py},e) in data coords of the svg's current plot */
+L.drag=function(svg,move,end){
+  let name=null;
+  const pt=e=>{ const m=svg.getScreenCTM(); if(!m) return null; const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const q=p.matrixTransform(m.inverse()); const P=svg._P; return {px:q.x,py:q.y,x:P?P.Xi(q.x):q.x,y:P?P.Yi(q.y):q.y}; };
+  svg.addEventListener('pointerdown',e=>{ const h=e.target.getAttribute&&e.target.getAttribute('data-h'); if(!h) return; name=h; try{svg.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); const p=pt(e); if(p&&move.start) move.start(name,p,e); });
+  svg.addEventListener('pointermove',e=>{ if(!name) return; const p=pt(e); if(p) move(name,p,e); });
+  const stop=()=>{ if(name){ const n=name; name=null; if(end) end(n); } };
+  svg.addEventListener('pointerup',stop); svg.addEventListener('pointercancel',stop);
+  return {active:()=>name,point:pt};
+};
+/* animate an object's view {x0,x1,y0,y1} toward a target, calling render each frame */
+L.animate=function(state,key,target,render){
+  cancelAnimationFrame(state['_anim_'+key]);
+  if(!state[key]||L.reduce()){ state[key]=target; render(); return; }
+  const f=Object.assign({},state[key]), t0=performance.now();
+  const step=now=>{ const k=Math.min(1,(now-t0)/280), e=1-Math.pow(1-k,3);
+    const v={}; for(const c in target) v[c]=f[c]+(target[c]-f[c])*e; state[key]=v; render();
+    if(k<1) state['_anim_'+key]=requestAnimationFrame(step); };
+  state['_anim_'+key]=requestAnimationFrame(step);
+};
+L.scrollTo=id=>{ const e=L.$(id); if(e) e.scrollIntoView({behavior:L.reduce()?'auto':'smooth',block:'start'}); };
+
+/* ---------- answer parsing ---------- */
+L.parse=function(raw){
+  let r=String(raw).trim().toLowerCase().replace(/−/g,'-').replace(/\s+/g,'');
+  if(/^\+?(inf|infinity|∞)$/.test(r)) return Infinity;
+  if(/^-(inf|infinity|∞)$/.test(r)) return -Infinity;
+  if(/^(dne|none|undefined|undef)$/.test(r)) return 'dne';
+  r=r.replace(/π/g,'pi');
+  const num='(?:\\d+(?:\\.\\d+)?|\\.\\d+)';
+  const m=r.match(new RegExp('^(-?)('+num+')?(pi)?(?:/('+num+'))?$'));
+  if(!m||(!m[2]&&!m[3])) return null;
+  let v=(m[2]?parseFloat(m[2]):1)*(m[3]?Math.PI:1); if(m[4]) v/=parseFloat(m[4]); return m[1]?-v:v;
+};
+
+/* ---------- step-by-step solver ----------
+   cfg: {bank:[{id,...}], build(p)->stages, prob(p)->html, graph(p) optional, placeholder}
+   stage: {kind:'choice', q, opts:[{t (TeX) | html, ok, why}], after, keep:true to skip shuffle}
+          {kind:'value', q, ans, tol, hint, after, label} */
+L.solver=function(cfg){
+  const $=L.$;
+  const SV={order:L.shuffle(cfg.bank.map(p=>p.id)),idx:0,p:null,stages:[],at:0,solved:0,first:0,total:0};
+  const byId=id=>cfg.bank.find(p=>p.id===id);
+  function score(){ $('sSolved').textContent=SV.solved; $('sFirst').textContent=SV.first+' of '+SV.total; }
+  function next(){
+    if(SV.idx>=SV.order.length){ SV.order=L.shuffle(cfg.bank.map(p=>p.id)); SV.idx=0; }
+    SV.p=byId(SV.order[SV.idx++]);
+    SV.stages=cfg.build(SV.p).map(s=>s.opts&&!s.keep?Object.assign(s,{opts:L.shuffle(s.opts)}):s);
+    SV.at=0; $('sProb').innerHTML=cfg.prob(SV.p); if(cfg.afterProb) cfg.afterProb(SV.p); $('sFoot').hidden=true; draw();
+  }
+  function advance(){
+    SV.at++;
+    if(SV.at>=SV.stages.length){ SV.solved++; $('sFoot').hidden=false; score(); }
+    draw();
+    const cur=$('sSteps').querySelector('li.cur button, li.cur input'); if(cur) cur.focus({preventScroll:true});
+  }
+  function draw(){
+    const ol=$('sSteps'); ol.textContent='';
+    SV.stages.forEach((s,i)=>{
+      if(i>SV.at) return;
+      const li=document.createElement('li'); if(i===SV.at) li.className='cur';
+      const box=document.createElement('div'); li.appendChild(box);
+      const q=document.createElement('p'); q.className='q'; if(s.qhtml) q.innerHTML=s.qhtml; else q.textContent=s.q; box.appendChild(q);
+      if(s.kind==='choice'){
+        const opts=document.createElement('div'); opts.className='opts'+(s.graphs?' graphs':'');
+        s.opts.forEach((o,k)=>{
+          const b=document.createElement('button'); b.type='button'; b.className='opt'; b.innerHTML=o.html||L.T(o.t);
+          if(o.label) b.setAttribute('aria-label',o.label);
+          if(s.tried&&s.tried.includes(k)) b.classList.add(o.ok?'right':'wrong');
+          if(s.solved){ b.disabled=!o.ok; if(o.ok) b.classList.add('right'); }
+          b.addEventListener('click',()=>{
+            if(i!==SV.at||s.solved) return;
+            s.tried=s.tried||[]; s.tried.push(k);
+            if(o.ok){ s.solved=true; if(s.tried.length===1) SV.first++; SV.total++; score(); advance(); }
+            else { s.msg=o.why||'Not this one. Check it against the original.'; draw(); }
+          });
+          opts.appendChild(b);
+        });
+        box.appendChild(opts);
+      }else{
+        const f=document.createElement('form'); f.className='inline'; f.autocomplete='off';
+        const id='sv'+i;
+        f.innerHTML='<label for="'+id+'" style="display:grid;gap:4px"><span class="lab">'+(s.label||'Answer')+'</span><input type="text" id="'+id+'" spellcheck="false" placeholder="'+(s.placeholder||cfg.placeholder||'e.g. 3/4')+'"></label><button type="submit" class="primary">Check</button>';
+        if(s.solved){ f.querySelector('input').value=s.given; f.querySelector('input').disabled=true; f.querySelector('button').disabled=true; }
+        f.addEventListener('submit',ev=>{
+          ev.preventDefault(); if(s.solved) return;
+          const raw=f.querySelector('input').value, val=L.parse(raw);
+          if(val===null){ s.msg='Enter a number such as 4, -2.5 or 3/4. You can also type pi, inf, -inf, or dne.'; draw(); return; }
+          s.attempts=(s.attempts||0)+1;
+          let ok;
+          if(s.ans==='dne'||val==='dne') ok=val===s.ans;
+          else if(!isFinite(s.ans)) ok=val===s.ans;
+          else ok=isFinite(val)&&Math.abs(val-s.ans)<=(s.tol??1e-6)*Math.max(1,s.rel?Math.abs(s.ans):1);
+          if(ok){ s.solved=true; s.given=raw; if(s.attempts===1) SV.first++; SV.total++; score(); advance(); }
+          else { s.msg=s.hint||'Not this one. Check your work and try again.'; draw(); }
+        });
+        box.appendChild(f);
+      }
+      if(s.msg&&!s.solved){ const fb=document.createElement('p'); fb.className='fb status-bad'; fb.textContent=s.msg; box.appendChild(fb); }
+      if(s.solved&&s.after){ const fb=document.createElement('p'); fb.className='fb status-ok'; if(s.afterHtml) fb.innerHTML=s.after; else fb.textContent=s.after; box.appendChild(fb); }
+      ol.appendChild(li);
+    });
+  }
+  $('sNew').addEventListener('click',next);
+  $('sNext').addEventListener('click',next);
+  window.__svAns=()=>{ const s=SV.stages[SV.at]; if(!s||s.kind!=='value') return null; return s.ans===Infinity?'inf':s.ans===-Infinity?'-inf':s.ans; };
+  if(cfg.graph){ $('sGraph').addEventListener('click',()=>cfg.graph(SV.p)); } else { $('sGraph').hidden=true; }
+  next();
+  return SV;
+};
+return L;
+})();
+
+</script>
+<script>
+(function(){
+"use strict";
+const $=L.$, fmt=L.fmt;
+L.typeset();
+const DNE='dne';
+/* each: f, a, fa (null if undefined), lv, rv, kind; pieces drawn with endpoints */
+const F=[
+ {id:'c',label:'x² − 1 at a = 1',tex:'f(x)=x^2-1',a:1,f:x=>x*x-1,fa:0,lv:0,rv:0},
+ {id:'hole',label:'(x² − 4)/(x − 2) at a = 2',tex:'f(x)=\\frac{x^2-4}{x-2}',a:2,f:x=>(x*x-4)/(x-2),fa:null,lv:4,rv:4},
+ {id:'point',label:'x + 1, with f(1) = 4',tex:'f(x)=\\begin{cases}x+1&x\\ne1\\\\4&x=1\\end{cases}',a:1,f:x=>x+1,fa:4,lv:2,rv:2},
+ {id:'jump',label:'A jump at a = 0',tex:'f(x)=\\begin{cases}x-1&x<0\\\\x^2+1&x\\ge0\\end{cases}',a:0,fl:x=>x-1,fr:x=>x*x+1,fa:1,lv:-1,rv:1},
+ {id:'inf',label:'1/(x − 1) at a = 1',tex:'f(x)=\\frac{1}{x-1}',a:1,f:x=>1/(x-1),fa:null,lv:-Infinity,rv:Infinity},
+ {id:'k',label:'Choose k: x² for x < 2, kx for x ≥ 2',tex:'f(x)=\\begin{cases}x^2&x<2\\\\kx&x\\ge2\\end{cases}',a:2,fl:x=>x*x,fr:null,lv:4}
+];
+const S={p:F[0],k:1};
+const svg=$('svg');
+function cur(){ const p=Object.assign({},S.p); if(p.id==='k'){ const k=S.k; p.fr=x=>k*x; p.fa=2*k; p.rv=2*k; } return p; }
+function limitOf(p){ return (isFinite(p.lv)&&isFinite(p.rv)&&Math.abs(p.lv-p.rv)<1e-9)?p.lv:DNE; }
+function render(){
+  const p=cur(), a=p.a;
+  const fl=p.fl||p.f, fr=p.fr||p.f;
+  let r=L.yrange([fl,fr],a-3,a+3,{q:p.id==='inf'?0.12:0.01,include:[p.lv,p.rv,p.fa??NaN]});
+  if(p.id==='inf') r={y0:-6,y1:6};
+  const P=L.plot(svg,{x0:a-3,x1:a+3,y0:r.y0,y1:r.y1}); P.axes(); P.vline(a,{stroke:'var(--ink-soft)',width:.75,dash:'16 4 3 4'});
+  P.path(fl,{to:a,width:2.5}); P.path(fr,{from:a,width:2.5});
+  if(isFinite(p.lv)) P.dot(a,p.lv,{hollow:true,r:5.5});
+  if(isFinite(p.rv)&&p.rv!==p.lv) P.dot(a,p.rv,{hollow:true,r:5.5});
+  if(p.fa!=null) P.dot(a,p.fa,{r:6,fill:'var(--acc)'});
+  P.xlabel(a,'a = '+a);
+  const lim=limitOf(p), c1=p.fa!=null, c2=lim!==DNE, c3=c1&&c2&&Math.abs(lim-p.fa)<1e-9;
+  const mark=(ok,txt,na)=>'<li><span class="mark '+(na?'':(ok?'status-ok':'status-bad'))+'">'+(na?'n/a':(ok?'Yes':'No'))+'</span><span>'+txt+'</span></li>';
+  $('checks').innerHTML=mark(c1,'f(a) is defined')+mark(c2,'the limit as x → a exists')+mark(c3,'the limit equals f(a)',!(c1&&c2));
+  let kind;
+  if(c3) kind='continuous';
+  else if(c2) kind='removable discontinuity';
+  else if(!isFinite(p.lv)||!isFinite(p.rv)) kind='infinite discontinuity';
+  else kind='jump discontinuity';
+  $('tbFn').innerHTML=L.T(p.id==='k'?'f(x)=\\begin{cases}x^2&x<2\\\\'+fmt(S.k,3)+'x&x\\ge2\\end{cases}':p.tex);
+  $('tbFa').textContent=p.fa==null?'undefined':fmt(p.fa);
+  $('tbL').textContent=fmt(p.lv); $('tbR').textContent=fmt(p.rv);
+  $('tbV').textContent=kind; $('tbV').className='v '+(c3?'status-ok':'status-bad');
+  const msgs={c:'All three conditions hold, so f is continuous at 1. The graph passes through the point with no break.',
+    hole:'The limit is 4, but f(2) is undefined. Defining f(2) = 4 would remove the break, which is why it is called removable.',
+    point:'f(1) = 4 and the limit is 2. Both exist, but they disagree. Moving that one point to height 2 would make f continuous.',
+    jump:'From the left f approaches −1, from the right 1. The limit does not exist, and no choice of f(0) can fix that.',
+    inf:'The function grows without bound on both sides of 1, so neither the limit nor f(1) exists.'};
+  $('verdict').textContent=p.id==='k'?(c3?'With k = '+fmt(S.k,3)+', the right piece starts at 2k = '+fmt(2*S.k,3)+', which matches the left limit of 4. The function is continuous at 2.':'The left piece approaches 4. The right piece starts at 2k = '+fmt(2*S.k,3)+'. Which value of k makes them meet?'):msgs[p.id];
+  $('kOut').textContent=fmt(S.k,3);
+}
+F.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.label; $('pSel').appendChild(o); });
+$('pSel').addEventListener('change',e=>{ S.p=F.find(p=>p.id===e.target.value); $('kCtl').hidden=S.p.id!=='k'; render(); });
+$('kVal').addEventListener('input',e=>{ S.k=Math.round(+e.target.value)/100*2/2; if(Math.abs(S.k-2)<0.03) S.k=2; render(); });
+render();
+
+/* ---------- IVT bisection ---------- */
+const G=[
+ {id:'cubic',label:'x³ − x − 1 on [1, 2]',f:x=>x*x*x-x-1,a:1,b:2,win:[0.5,2.3]},
+ {id:'cos',label:'cos x − x on [0, 1]',f:x=>Math.cos(x)-x,a:0,b:1,win:[-0.4,1.4]},
+ {id:'sq',label:'x² on [1, 2], solving x² = N',f:x=>x*x,a:1,b:2,win:[0.5,2.3],N:2},
+ {id:'recip',label:'1/x on [−1, 1] (not continuous)',f:x=>1/x,a:-1,b:1,win:[-1.4,1.4]}
+];
+const I={g:G[0],a:1,b:2,N:0,steps:[]};
+const svg2=$('svg2');
+function nRange(g){ const r=L.yrange([g.f],g.win[0],g.win[1],{q:g.id==='recip'?0.15:0.01}); return g.id==='recip'?{y0:-4,y1:4}:r; }
+function ivtRender(){
+  const g=I.g, r=nRange(g), P=L.plot(svg2,{x0:g.win[0],x1:g.win[1],y0:r.y0,y1:r.y1});
+  P.axes(); P.rect(I.a,r.y0,I.b,r.y1,{fill:'var(--acc-wash)'});
+  P.hline(I.N,{stroke:'var(--alt)',width:1.75,dash:'9 5'});
+  P.path(g.f,{width:2.5,jump:0.4});
+  [I.a,I.b].forEach((x,k)=>{ const y=g.f(x); if(isFinite(y)) P.dot(x,y,{r:5,fill:'var(--ink)'}); P.dot(x,P.v.y0+(P.v.y1-P.v.y0)*0.03,{r:7,fill:'var(--acc)'}); P.handle(x,P.v.y0+(P.v.y1-P.v.y0)*0.03,k?'B':'A',{cursor:'ew-resize'}); });
+  P.xlabel(I.a,fmt(I.a,5),{fill:'var(--acc-text)'}); P.xlabel(I.b,fmt(I.b,5),{fill:'var(--acc-text)'});
+  P.ylabel(I.N,'N = '+fmt(I.N,3),{fill:'var(--alt)'});
+  const fa=g.f(I.a)-I.N, fb=g.f(I.b)-I.N;
+  let msg;
+  if(fa*fb>0) msg='f(a) − N and f(b) − N have the same sign ('+fmt(fa,3)+' and '+fmt(fb,3)+'). The theorem guarantees nothing on this interval. Move an endpoint or change N.';
+  else if(g.id==='recip') msg='The signs differ, so bisection keeps narrowing the interval, but it is closing in on x = 0, where 1/x has an asymptote, not a solution. 1/x is not continuous on [−1, 1], so the theorem does not apply.';
+  else msg='f(a) − N = '+fmt(fa,4)+' and f(b) − N = '+fmt(fb,4)+' have opposite signs, and f is continuous, so some c between '+fmt(I.a,6)+' and '+fmt(I.b,6)+' has f(c) = N. Bisect to narrow it down.';
+  $('ivtMsg').textContent=msg;
+  $('nOut').textContent=fmt(I.N,3);
+  const body=$('ivtBody'); body.textContent='';
+  I.steps.forEach((s,i)=>{ const tr=document.createElement('tr'); tr.innerHTML='<td>'+(i+1)+'</td><td>'+fmt(s.a,7)+'</td><td>'+fmt(s.b,7)+'</td><td>'+fmt(s.m,7)+'</td><td>'+fmt(s.fm,4)+'</td><td>'+fmt(s.b-s.a,3)+'</td>'; body.appendChild(tr); });
+}
+function ivtLoad(id){
+  I.g=G.find(g=>g.id===id); I.a=I.g.a; I.b=I.g.b; I.steps=[];
+  const r=nRange(I.g); I.N=I.g.N??0; $('nVal').value=Math.round((I.N-r.y0)/(r.y1-r.y0)*1000);
+  ivtRender();
+}
+G.forEach(g=>{ const o=document.createElement('option'); o.value=g.id; o.textContent=g.label; $('iSel').appendChild(o); });
+$('iSel').addEventListener('change',e=>ivtLoad(e.target.value));
+$('nVal').addEventListener('input',e=>{ const r=nRange(I.g); I.N=Number((r.y0+(r.y1-r.y0)*(+e.target.value)/1000).toFixed(2)); I.steps=[]; ivtRender(); });
+$('bisect').addEventListener('click',()=>{
+  const g=I.g, fa=g.f(I.a)-I.N, fb=g.f(I.b)-I.N; if(fa*fb>0||I.steps.length>=30) return;
+  const m=(I.a+I.b)/2, fm=g.f(m)-I.N;
+  I.steps.push({a:I.a,b:I.b,m,fm});
+  if(fm===0){ I.a=I.b=m; } else if(fa*fm<0) I.b=m; else I.a=m;
+  ivtRender();
+});
+$('ivtReset').addEventListener('click',()=>ivtLoad(I.g.id));
+L.drag(svg2,(n,pt)=>{ const x=L.clamp(pt.x,I.g.win[0],I.g.win[1]); if(n==='A') I.a=Math.min(x,I.b-0.01); else I.b=Math.max(x,I.a+0.01); I.steps=[]; ivtRender(); });
+ivtLoad('cubic');
+
+/* ---------- solver ---------- */
+const yn=(yes,whyYes,whyNo)=>[{t:'\\text{Yes}',ok:yes,why:whyYes},{t:'\\text{No}',ok:!yes,why:whyNo}];
+const kinds=['continuous','removable','jump','infinite'];
+const kindOpts=k=>kinds.map(x=>({t:'\\text{'+(x==='continuous'?'Continuous':x[0].toUpperCase()+x.slice(1)+' discontinuity')+'}',ok:x===k,why:'Go back to which of the three conditions failed.'}));
+const BANK=[
+ {id:1,tex:'f(x)=\\frac{x^2-9}{x-3}\\ \\text{ at } a=3',build:()=>[
+   {kind:'choice',q:'Is f(3) defined?',opts:yn(false,'Substituting 3 gives 0/0, which is undefined.',null),keep:true},
+   {kind:'value',q:'What is the limit as x → 3?',ans:6,hint:'Factor x² − 9 and cancel.'},
+   {kind:'choice',q:'What kind of point is x = 3?',opts:kindOpts('removable'),keep:true,after:'The limit exists but f(3) does not, so the discontinuity is removable. Defining f(3) = 6 would fix it.'}]},
+ {id:2,tex:'f(x)=\\begin{cases}x+1&x<1\\\\3-x&x\\ge1\\end{cases}\\ \\text{ at } a=1',build:()=>[
+   {kind:'value',q:'What is f(1)?',ans:2,hint:'For x ≥ 1, use the second formula.'},
+   {kind:'value',q:'What is the left-hand limit at 1?',ans:2,hint:'For x < 1, use x + 1.'},
+   {kind:'value',q:'What is the right-hand limit at 1?',ans:2,hint:'For x > 1, use 3 − x.'},
+   {kind:'choice',q:'What kind of point is x = 1?',opts:kindOpts('continuous'),keep:true,after:'All three conditions hold, so f is continuous at 1.'}]},
+ {id:3,tex:'f(x)=\\begin{cases}x^2&x<2\\\\x+3&x\\ge2\\end{cases}\\ \\text{ at } a=2',build:()=>[
+   {kind:'value',q:'What is the left-hand limit at 2?',ans:4,hint:'For x < 2, use x².'},
+   {kind:'value',q:'What is the right-hand limit at 2?',ans:5,hint:'For x > 2, use x + 3.'},
+   {kind:'choice',q:'What kind of point is x = 2?',opts:kindOpts('jump'),keep:true,after:'The one-sided limits are 4 and 5, so this is a jump discontinuity.'}]},
+ {id:4,tex:'f(x)=\\frac{1}{(x+2)^2}\\ \\text{ at } a=-2',build:()=>[
+   {kind:'choice',q:'Is f(−2) defined?',opts:yn(false,'The denominator is 0 at x = −2.',null),keep:true},
+   {kind:'value',q:'What is the limit as x → −2? Type inf or -inf if it grows without bound.',ans:Infinity,hint:'The denominator is a small positive number on both sides.'},
+   {kind:'choice',q:'What kind of point is x = −2?',opts:kindOpts('infinite'),keep:true}]},
+ {id:5,tex:'f(x)=\\begin{cases}\\frac{x^2-1}{x-1}&x\\ne1\\\\3&x=1\\end{cases}\\ \\text{ at } a=1',build:()=>[
+   {kind:'value',q:'What is f(1)?',ans:3,hint:'The second line defines f(1) directly.'},
+   {kind:'value',q:'What is the limit as x → 1?',ans:2,hint:'Factor and cancel, using the first line.'},
+   {kind:'choice',q:'What kind of point is x = 1?',opts:kindOpts('removable'),keep:true,after:'Both exist but disagree. Changing f(1) to 2 would remove the discontinuity.'}]},
+ {id:6,tex:'f(x)=\\begin{cases}kx+1&x<2\\\\x^2&x\\ge2\\end{cases}\\ \\text{ Find } k \\text{ so that } f \\text{ is continuous.}',build:()=>[
+   {kind:'choice',q:'What is the left-hand limit at 2, in terms of k?',opts:[{t:'2k+1',ok:1},{t:'4',why:'That is the right-hand side. For x < 2, use kx + 1.'},{t:'k+1',why:'Substitute x = 2 into kx + 1.'}]},
+   {kind:'value',q:'What is the right-hand limit at 2, which is also f(2)?',ans:4,hint:'For x ≥ 2, use x².'},
+   {kind:'value',q:'Set them equal: 2k + 1 = 4. What is k?',ans:1.5,label:'k',hint:'Subtract 1, then divide by 2.',after:'With k = 3/2 both pieces meet at the point (2, 4).'}]},
+ {id:7,tex:'\\text{Show that } x^3+x-1=0 \\text{ has a solution in } [0,1].',build:()=>[
+   {kind:'choice',q:'Is f(x) = x³ + x − 1 continuous on [0, 1]?',opts:yn(true,null,'Every polynomial is continuous everywhere.'),keep:true},
+   {kind:'value',q:'What is f(0)?',ans:-1},
+   {kind:'value',q:'What is f(1)?',ans:1},
+   {kind:'choice',q:'What does the Intermediate Value Theorem tell you?',opts:[{t:'\\text{There is a } c \\text{ in } (0,1) \\text{ with } f(c)=0',ok:1},{t:'\\text{The solution is } x=\\tfrac12',why:'The theorem says a solution exists, not where it is. f(1/2) = −0.375.'},{t:'\\text{Nothing, since } f(0)\\ne 0',why:'0 lies between f(0) = −1 and f(1) = 1, which is exactly what the theorem needs.'}]}]},
+ {id:8,tex:'f(x)=\\tfrac{1}{x} \\text{ on } [-1,1]. \\text{ Does the IVT guarantee a zero?}',build:()=>[
+   {kind:'value',q:'What is f(−1)?',ans:-1},{kind:'value',q:'What is f(1)?',ans:1},
+   {kind:'choice',q:'Is f continuous on [−1, 1]?',opts:yn(false,'f(0) is undefined, so f is not continuous on the whole interval.',null),keep:true},
+   {kind:'choice',q:'So what can you conclude?',opts:[{t:'\\text{The IVT does not apply}',ok:1},{t:'\\text{There is a zero in } (-1,1)',why:'The signs differ, but without continuity the theorem promises nothing. In fact 1/x is never 0.'}],after:'The theorem does not apply. And indeed 1/x is never 0.'}]},
+ {id:9,tex:'f(x)=x^2+1 \\text{ on } [-1,1]. \\text{ Does the IVT guarantee a zero?}',build:()=>[
+   {kind:'value',q:'What is f(−1)?',ans:2},{kind:'value',q:'What is f(1)?',ans:2},
+   {kind:'choice',q:'What does the theorem say about a zero in (−1, 1)?',opts:[{t:'\\text{Nothing; 0 is not between } f(-1) \\text{ and } f(1)',ok:1},{t:'\\text{There is no zero}',why:'The theorem never rules zeros out. It only guarantees them. (This function does happen to have none.)'},{t:'\\text{There is a zero}',why:'0 is not between 2 and 2.'}]}]}
+];
+L.solver({bank:BANK,placeholder:'e.g. 3/2, inf or dne',prob:p=>L.T(p.tex,true),build:p=>p.build()});
+})();
+</script>
+
+</body>
+</html>
