@@ -214,6 +214,14 @@ section{scroll-margin-top:70px}
 .s-paper .soon h3{color:var(--paper);font-size:clamp(1.5rem,2.6vw,2rem)}
 .soon ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
 .soon li{border:1.5px solid var(--line);padding:8px 16px;font-weight:500;font-size:.95rem}
+.signup{margin-top:24px;max-width:520px}
+.signup label{display:block;font-weight:600;font-size:1rem;margin-bottom:10px}
+.signup .row{display:flex;gap:10px;flex-wrap:wrap}
+.signup input[type=email]{flex:1 1 220px;min-width:0;padding:13px 16px;font:inherit;font-size:1rem;color:var(--ink);background:var(--paper);border:2px solid var(--paper);border-radius:0}
+.signup input[type=email]::placeholder{color:#7A7B8E}
+.signup button{padding:13px 22px;font:inherit;font-weight:600;font-size:.95rem;color:var(--ink);background:var(--ochre-hi);border:2px solid var(--ochre-hi);cursor:pointer;transition:background .2s,border-color .2s}
+.signup button:hover{background:var(--paper);border-color:var(--paper)}
+.signup p{margin:10px 0 0;font-size:.85rem;color:var(--mist)}
 .soon .link{color:var(--paper);display:inline-block;margin-top:18px}
 
 /* approach */
@@ -584,8 +592,14 @@ END FEDORUK CLASSROOM -->
       <h3>In preparation</h3>
       <div>
         <ul><li>Combinatorics by Inquiry</li><li>Inference by Inquiry</li><li>Modular Arithmetic by Inquiry</li></ul>
-        <!-- TODO: point this at a mailing-list sign-up once one exists -->
-        <a class="link" href="mailto:contact@bfedoruk.com?subject=New%20By%20Inquiry%20books">Hear when they are published</a>
+        <form class="signup" action="https://buttondown.com/api/emails/embed-subscribe/fedoruk" method="post" target="_blank">
+          <label for="bd-email">Hear when they are published</label>
+          <div class="row">
+            <input type="email" name="email" id="bd-email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit">Subscribe</button>
+          </div>
+          <p>An email when a new book comes out, nothing else. Unsubscribe any time.</p>
+        </form>
       </div>
     </div>
   </div>
@@ -774,5 +788,6 @@ END FEDORUK CLASSROOM -->
   }
 })();
 </script>
+<script data-goatcounter="https://fedoruk.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
