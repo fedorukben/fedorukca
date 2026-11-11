@@ -180,6 +180,25 @@ section{scroll-margin-top:70px}
 .book h3{font-size:clamp(1.4rem,2vw,1.7rem);line-height:1.15;margin-top:6px}
 .book p{color:#45465A;font-size:1rem;margin-top:10px;max-width:42ch}
 .book .links{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;color:var(--indigo)}
+/* spotlight (applied by script; without it the catalogue grid above stays) */
+.shelf.spot{display:block}
+.shelf.spot .book{grid-template-columns:minmax(0,clamp(200px,26vw,340px)) minmax(0,1fr);gap:clamp(28px,5vw,72px)}
+.shelf.spot .book[hidden]{display:none}
+.shelf.spot .book .tag{font-size:.86rem}
+.shelf.spot .book h3{font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.08;margin-top:10px}
+.shelf.spot .book p{font-size:clamp(1.05rem,1.4vw,1.2rem);line-height:1.6;max-width:46ch;margin-top:16px}
+.shelf.spot .book .links{margin-top:26px}
+.shelf.spot .book.enter{animation:spotin .55s var(--ease)}
+@keyframes spotin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.picker{display:flex;gap:clamp(12px,1.8vw,22px);margin-top:clamp(40px,5vw,60px);padding-top:clamp(24px,3vw,32px);border-top:1px solid rgba(43,46,110,.14);overflow-x:auto;padding-bottom:6px}
+.picker button{flex:0 0 auto;width:clamp(58px,7vw,92px);padding:0 0 12px;border:0;background:none;cursor:pointer;position:relative;opacity:.5;transition:opacity .25s,transform .35s var(--ease)}
+.picker button img{display:block;width:100%;height:auto;aspect-ratio:2/3;box-shadow:0 12px 20px -12px rgba(8,9,30,.6)}
+.picker button::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ochre-hi);transform:scaleX(0);transition:transform .3s var(--ease)}
+.picker button:hover{opacity:.85;transform:translateY(-4px)}
+.picker button[aria-pressed="true"]{opacity:1;transform:translateY(-6px)}
+.picker button[aria-pressed="true"]::after{transform:scaleX(1)}
+@media (max-width:600px){.shelf.spot .book{grid-template-columns:minmax(0,1fr)}.shelf.spot .book .cover-img{max-width:220px}.picker{gap:10px;overflow:visible}.picker button{flex:1 1 0;width:auto;min-width:0}}
+@media (prefers-reduced-motion:reduce){.shelf.spot .book.enter{animation:none}}
 .soon{margin-top:clamp(48px,6vw,72px);display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center;background:var(--indigo);color:var(--paper);padding:clamp(26px,4vw,44px)}
 @media (max-width:760px){.soon{grid-template-columns:minmax(0,1fr)}}
 .s-paper .soon h3{color:var(--paper);font-size:clamp(1.5rem,2.6vw,2rem)}
@@ -550,6 +569,47 @@ END FEDORUK CLASSROOM -->
     if (en.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
   }), {rootMargin:'-45% 0px -50% 0px'});
   ['books','lessons','instructors','about'].forEach(id => { const el = document.getElementById(id); if (el) spy.observe(el); });
+
+  const shelf = document.querySelector('.shelf');
+  if (shelf) {
+    const books = [...shelf.querySelectorAll('.book')];
+    books.forEach(b => b.classList.remove('reveal','r2','r3','r4'));
+    shelf.classList.add('spot','reveal');
+    const picker = document.createElement('div');
+    picker.className = 'picker reveal';
+    picker.setAttribute('role','group');
+    picker.setAttribute('aria-label','Choose a book');
+    const btns = books.map((b, i) => {
+      b.id = b.id || 'book-' + i;
+      const img = b.querySelector('.cover-img'), title = b.querySelector('h3').textContent;
+      const bt = document.createElement('button');
+      bt.type = 'button';
+      bt.setAttribute('aria-label', title);
+      bt.setAttribute('aria-controls', b.id);
+      bt.innerHTML = '<img src="' + img.getAttribute('src') + '" alt="" width="320" height="480" loading="lazy">';
+      bt.addEventListener('click', () => show(i, true));
+      picker.appendChild(bt);
+      return bt;
+    });
+    shelf.after(picker);
+    let cur = -1;
+    function show(i, animate) {
+      if (i === cur) return;
+      cur = i;
+      books.forEach((b, j) => { b.hidden = j !== i; b.classList.remove('enter'); });
+      btns.forEach((bt, j) => bt.setAttribute('aria-pressed', j === i));
+      const img = books[i].querySelector('.cover-img'); img.loading = 'eager';
+      if (animate && !reduce) { void books[i].offsetWidth; books[i].classList.add('enter'); }
+    }
+    picker.addEventListener('keydown', e => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      const n = (cur + d + books.length) % books.length;
+      show(n, true); btns[n].focus();
+    });
+    show(Math.floor(Math.random() * books.length), false);
+  }
 
   const els = document.querySelectorAll('.reveal');
   if (reduce || !('IntersectionObserver' in window)) els.forEach(el => el.classList.add('in'));
